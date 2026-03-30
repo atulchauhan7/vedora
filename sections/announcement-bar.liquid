@@ -1,0 +1,36 @@
+{% if section.settings.show_announcement %}
+<style>:root{--announcement-content-offset:{% if section.settings.timer_end != blank %}48px{% else %}26px{% endif %};--announcement-height:{% if section.settings.timer_end != blank %}48px{% else %}26px{% endif %}}</style>
+<div class="announcement-bar{% if section.settings.timer_end != blank %} announcement-bar--timer{% else %} announcement-bar--belt{% endif %}" role="banner">
+  {% if section.settings.timer_end != blank %}
+  <div class="announcement-bar__timer-layout">
+    <div class="announcement-bar__timer-msg">
+      {% if section.settings.link != blank %}<a href="{{ section.settings.link }}" class="announcement-bar__link">{% endif %}
+      {{ section.settings.text }}
+      {% if section.settings.link != blank %}</a>{% endif %}
+    </div>
+    <div class="ann-vdivider" aria-hidden="true"></div>
+    <div class="announcement-bar__countdown" id="ann-countdown" data-end="{{ section.settings.timer_end }}">
+      <span class="ann-ends-label">Ends In</span>
+      <span class="ann-timer-seg"><span class="ann-timer-num" id="ann-hours">00</span><span class="ann-timer-label">Hr</span></span>
+      <span class="ann-timer-seg"><span class="ann-timer-num" id="ann-mins">00</span><span class="ann-timer-label">Min</span></span>
+      <span class="ann-timer-seg"><span class="ann-timer-num" id="ann-secs">00</span><span class="ann-timer-label">Sec</span></span>
+    </div>
+  </div>
+  {% else %}
+  {% if section.settings.link != blank %}<a href="{{ section.settings.link }}" class="announcement-bar__link">{% endif %}
+    <div class="announcement-bar__marquee" aria-label="Announcement">
+      <span>{{ section.settings.text }}</span>
+      <span>{{ section.settings.text }}</span>
+      <span>{{ section.settings.text }}</span>
+      <span>{{ section.settings.text }}</span>
+      <span>{{ section.settings.text }}</span>
+      <span>{{ section.settings.text }}</span>
+    </div>
+  {% if section.settings.link != blank %}</a>{% endif %}
+  {% endif %}
+  </div>
+{% endif %}
+
+{% schema %}
+{"name":"Announcement Bar","settings":[{"type":"checkbox","id":"show_announcement","label":"Show announcement bar","default":true},{"type":"text","id":"text","label":"Announcement text","default":"Free shipping on orders over $100 &mdash; Shop Now"},{"type":"url","id":"link","label":"Link"},{"type":"header","content":"Countdown Timer"},{"type":"text","id":"timer_end","label":"Timer end date & time","default":"2026-12-31T23:59:59","info":"Format: YYYY-MM-DDTHH:MM:SS (device local time)"}]}
+{% endschema %}
