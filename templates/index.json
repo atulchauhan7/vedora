@@ -61,7 +61,7 @@
         "tab2": {
           "type": "tab",
           "settings": {
-            "tab_label": "DESi daftar fits",
+            "tab_label": "Daftar fits",
             "collection": "desi-daftar-fits"
           }
         },
