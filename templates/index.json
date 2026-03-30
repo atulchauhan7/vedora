@@ -61,8 +61,8 @@
         "tab2": {
           "type": "tab",
           "settings": {
-            "tab_label": "Suit sets",
-            "collection": "suit-sets"
+            "tab_label": "DESi daftar fits",
+            "collection": "desi-daftar-fits"
           }
         },
         "tab3": {
