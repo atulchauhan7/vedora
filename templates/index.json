@@ -37,6 +37,44 @@
         "show_scroll_indicator": false
       }
     },
+    "tabbed": {
+      "type": "tabbed-collections",
+      "blocks": {
+        "tab1": {
+          "type": "tab",
+          "settings": {
+            "tab_label": "Best Seller",
+            "collection": "best-seller"
+          }
+        },
+        "tab2": {
+          "type": "tab",
+          "settings": {
+            "tab_label": "sets",
+            "collection": "suit-sets"
+          }
+        },
+        "tab3": {
+          "type": "tab",
+          "settings": {
+            "tab_label": "Coord Set",
+            "collection": "co-ord-sets"
+          }
+        }
+      },
+      "block_order": [
+        "tab1",
+        "tab2",
+        "tab3"
+      ],
+      "settings": {
+        "subtitle": "Shop By",
+        "title": "Our Collections",
+        "columns": "4",
+        "products_to_show": 8,
+        "show_view_all": true
+      }
+    },
     "banners": {
       "type": "image-banners",
       "blocks": {
@@ -109,44 +147,6 @@
         "button_link_2": "",
         "slideshow_speed": 6,
         "show_scroll_indicator": false
-      }
-    },
-    "tabbed": {
-      "type": "tabbed-collections",
-      "blocks": {
-        "tab1": {
-          "type": "tab",
-          "settings": {
-            "tab_label": "Best Seller",
-            "collection": "best-seller"
-          }
-        },
-        "tab2": {
-          "type": "tab",
-          "settings": {
-            "tab_label": "sets",
-            "collection": "suit-sets"
-          }
-        },
-        "tab3": {
-          "type": "tab",
-          "settings": {
-            "tab_label": "Coord Set",
-            "collection": "co-ord-sets"
-          }
-        }
-      },
-      "block_order": [
-        "tab1",
-        "tab2",
-        "tab3"
-      ],
-      "settings": {
-        "subtitle": "Shop By",
-        "title": "Our Collections",
-        "columns": "4",
-        "products_to_show": 8,
-        "show_view_all": true
       }
     },
     "featured": {
@@ -264,9 +264,9 @@
   },
   "order": [
     "hero",
+    "tabbed",
     "banners",
     "hero_banner_nYYJ4f",
-    "tabbed",
     "featured",
     "scrolling",
     "image-text",
