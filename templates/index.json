@@ -15,7 +15,6 @@
         "slide_QhVVpg": {
           "type": "slide",
           "settings": {
-            "image": "shopify://shop_images/900_1200.webp",
             "video": "",
             "subtitle": "",
             "heading": ""
@@ -25,6 +24,7 @@
       "block_order": [
         "slide_QhVVpg"
       ],
+      "disabled": true,
       "settings": {
         "subtitle": "",
         "heading": "",
@@ -140,19 +140,19 @@
         "b1": {
           "type": "banner",
           "settings": {
-            "image": "shopify://shop_images/imgi_10_SET0213_3_ef422a9e-9e61-47f8-95eb-bc31484dff1c.jpg",
-            "heading": "New Arrivals",
+            "image": "shopify://shop_images/llHnerbb_192d9bfe3543435e82f00d5af1fd7fbd.webp",
+            "heading": "Bestseller",
             "button_label": "Shop Now",
-            "link": "shopify://collections/new-arrival"
+            "link": "shopify://collections/best-seller"
           }
         },
         "b2": {
           "type": "banner",
           "settings": {
-            "image": "shopify://shop_images/imgi_6_3-96105505863380_l.jpg",
-            "heading": "kurti sets",
+            "image": "shopify://shop_images/imgi_12_Untitled-1_0005_DSC07037-scaled_900x_c0120c5f-340e-4c81-8804-97488259a980.webp",
+            "heading": "New Arrival",
             "button_label": "Shop Now",
-            "link": "shopify://collections/kurta-sets"
+            "link": "shopify://collections/new-arrival"
           }
         }
       },
@@ -201,7 +201,6 @@
     "image-text": {
       "type": "image-with-text",
       "settings": {
-        "image": "shopify://shop_images/Untitled_design_34.png",
         "subtitle": "Our Story",
         "heading": "Crafted with Love",
         "text": "<p>Every kurti in our collection is thoughtfully designed, blending traditional Indian craftsmanship with contemporary style. From handpicked fabrics to intricate detailing, we create ethnic wear that celebrates the grace of every woman.</p>",
