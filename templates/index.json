@@ -200,6 +200,7 @@
     },
     "image-text": {
       "type": "image-with-text",
+      "disabled": true,
       "settings": {
         "subtitle": "Our Story",
         "heading": "Crafted with Love",
