@@ -57,7 +57,7 @@
         "type": "announcement-bar",
         "settings": {
           "show_announcement": true,
-          "text": "Buy 2 -> Get 30% off",
+          "text": "Flat 10% Off on prepaid orders",
           "link": "",
           "timer_end": ""
         }
