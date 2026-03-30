@@ -37,6 +37,34 @@
         "show_scroll_indicator": false
       }
     },
+    "banners": {
+      "type": "image-banners",
+      "blocks": {
+        "b1": {
+          "type": "banner",
+          "settings": {
+            "image": "shopify://shop_images/imgi_9_Untitled-1_0000_DSC06015-scaled_900x_4efad4f8-c2a8-450a-b3d5-cc0a2c8a8fbb.webp",
+            "heading": "Bestseller",
+            "button_label": "Shop Now",
+            "link": "shopify://collections/best-seller"
+          }
+        },
+        "b2": {
+          "type": "banner",
+          "settings": {
+            "image": "shopify://shop_images/imgi_12_Untitled-1_0005_DSC07037-scaled_900x_c0120c5f-340e-4c81-8804-97488259a980.webp",
+            "heading": "New Arrival",
+            "button_label": "Shop Now",
+            "link": "shopify://collections/new-arrival"
+          }
+        }
+      },
+      "block_order": [
+        "b1",
+        "b2"
+      ],
+      "settings": {}
+    },
     "hero_banner_nYYJ4f": {
       "type": "hero-banner",
       "blocks": {
@@ -134,34 +162,6 @@
         "show_view_all": true
       }
     },
-    "banners": {
-      "type": "image-banners",
-      "blocks": {
-        "b1": {
-          "type": "banner",
-          "settings": {
-            "image": "shopify://shop_images/llHnerbb_192d9bfe3543435e82f00d5af1fd7fbd.webp",
-            "heading": "Bestseller",
-            "button_label": "Shop Now",
-            "link": "shopify://collections/best-seller"
-          }
-        },
-        "b2": {
-          "type": "banner",
-          "settings": {
-            "image": "shopify://shop_images/imgi_12_Untitled-1_0005_DSC07037-scaled_900x_c0120c5f-340e-4c81-8804-97488259a980.webp",
-            "heading": "New Arrival",
-            "button_label": "Shop Now",
-            "link": "shopify://collections/new-arrival"
-          }
-        }
-      },
-      "block_order": [
-        "b1",
-        "b2"
-      ],
-      "settings": {}
-    },
     "scrolling": {
       "type": "scrolling-text",
       "blocks": {
@@ -200,8 +200,8 @@
     },
     "image-text": {
       "type": "image-with-text",
-      "disabled": true,
       "settings": {
+        "image": "shopify://shop_images/DALL_E_2025-02-18_12.53.35_-_Create_a_versatile_and_professional_logo_for_a_clothing_brand_named_Vedora_._The_logo_should_feature_the_name_Vedora_in_a_clean_modern_typeface_wi.webp",
         "subtitle": "Our Story",
         "heading": "Crafted with Love",
         "text": "<p>Every kurti in our collection is thoughtfully designed, blending traditional Indian craftsmanship with contemporary style. From handpicked fabrics to intricate detailing, we create ethnic wear that celebrates the grace of every woman.</p>",
@@ -220,7 +220,7 @@
             "title": "Returns and Refund Policy",
             "text": "Hassle-free returns within 10 days",
             "link_label": "Learn More",
-            "link_url": "shopify://pages/return-and-exchange-policy"
+            "link_url": "shopify://pages/return-exchange-policy"
           }
         },
         "usp2": {
@@ -240,7 +240,7 @@
             "title": "Customer Support",
             "text": "Dedicated support for all your queries",
             "link_label": "Learn More",
-            "link_url": "shopify://pages/contact"
+            "link_url": "shopify://pages/contact-us"
           }
         }
       },
@@ -264,10 +264,10 @@
   },
   "order": [
     "hero",
+    "banners",
     "hero_banner_nYYJ4f",
     "tabbed",
     "featured",
-    "banners",
     "scrolling",
     "image-text",
     "usp",
