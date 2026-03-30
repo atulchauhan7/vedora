@@ -12,6 +12,15 @@
     "hero": {
       "type": "hero-banner",
       "blocks": {
+        "slide_mXQYFm": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/IMG_0566_1800x1800_94ebdf17-13e0-4a54-a331-efbe74e7caae.webp",
+            "video": "",
+            "subtitle": "",
+            "heading": ""
+          }
+        },
         "slide_QhVVpg": {
           "type": "slide",
           "settings": {
@@ -23,6 +32,7 @@
         }
       },
       "block_order": [
+        "slide_mXQYFm",
         "slide_QhVVpg"
       ],
       "settings": {
