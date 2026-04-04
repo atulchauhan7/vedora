@@ -12,10 +12,19 @@
     "hero": {
       "type": "hero-banner",
       "blocks": {
+        "slide_mXQYFm": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/IMG_0566_1800x1800_94ebdf17-13e0-4a54-a331-efbe74e7caae.webp",
+            "video": "",
+            "subtitle": "",
+            "heading": ""
+          }
+        },
         "slide_QhVVpg": {
           "type": "slide",
           "settings": {
-            "image": "shopify://shop_images/900_1200.webp",
+            "image": "shopify://shop_images/56_1800x1800_3b5789e2-a6bd-42ec-9032-58d25c73371f.webp",
             "video": "",
             "subtitle": "",
             "heading": ""
@@ -23,9 +32,11 @@
         }
       },
       "block_order": [
+        "slide_mXQYFm",
         "slide_QhVVpg"
       ],
       "settings": {
+        "image": "shopify://shop_images/ISET401PC_1_8a8a51b2-2ab0-4736-b651-ec63ae3d178a.webp",
         "subtitle": "",
         "heading": "",
         "description": "",
@@ -36,6 +47,72 @@
         "slideshow_speed": 6,
         "show_scroll_indicator": false
       }
+    },
+    "tabbed": {
+      "type": "tabbed-collections",
+      "blocks": {
+        "tab1": {
+          "type": "tab",
+          "settings": {
+            "tab_label": "Shaadi saga",
+            "collection": "the-shaadi-saga25"
+          }
+        },
+        "tab2": {
+          "type": "tab",
+          "settings": {
+            "tab_label": "Best sellers",
+            "collection": "best-seller"
+          }
+        },
+        "tab3": {
+          "type": "tab",
+          "settings": {
+            "tab_label": "Coord Set",
+            "collection": "co-ord-set"
+          }
+        }
+      },
+      "block_order": [
+        "tab1",
+        "tab2",
+        "tab3"
+      ],
+      "settings": {
+        "subtitle": "Shop By",
+        "title": "Our Collections",
+        "columns": "4",
+        "products_to_show": 8,
+        "show_view_all": true
+      }
+    },
+    "banners": {
+      "type": "image-banners",
+      "blocks": {
+        "b1": {
+          "type": "banner",
+          "settings": {
+            "image": "shopify://shop_images/imgi_9_Untitled-1_0000_DSC06015-scaled_900x_4efad4f8-c2a8-450a-b3d5-cc0a2c8a8fbb.webp",
+            "heading": "Desi Daftar Fits",
+            "button_label": "Shop Now",
+            "link": "shopify://collections/desi-daftar-fits"
+          }
+        },
+        "b2": {
+          "type": "banner",
+          "settings": {
+            "image": "shopify://shop_images/imgi_12_Untitled-1_0005_DSC07037-scaled_900x_c0120c5f-340e-4c81-8804-97488259a980.webp",
+            "heading": "New Arrival",
+            "button_label": "Shop Now",
+            "link": "shopify://collections/new-arrival"
+          }
+        }
+      },
+      "block_order": [
+        "b1",
+        "b2"
+      ],
+      "settings": {}
     },
     "hero_banner_nYYJ4f": {
       "type": "hero-banner",
@@ -83,44 +160,6 @@
         "show_scroll_indicator": false
       }
     },
-    "tabbed": {
-      "type": "tabbed-collections",
-      "blocks": {
-        "tab1": {
-          "type": "tab",
-          "settings": {
-            "tab_label": "Best Seller",
-            "collection": "best-seller"
-          }
-        },
-        "tab2": {
-          "type": "tab",
-          "settings": {
-            "tab_label": "sets",
-            "collection": "suit-sets"
-          }
-        },
-        "tab3": {
-          "type": "tab",
-          "settings": {
-            "tab_label": "Coord Set",
-            "collection": "co-ord-sets"
-          }
-        }
-      },
-      "block_order": [
-        "tab1",
-        "tab2",
-        "tab3"
-      ],
-      "settings": {
-        "subtitle": "Shop By",
-        "title": "Our Collections",
-        "columns": "4",
-        "products_to_show": 8,
-        "show_view_all": true
-      }
-    },
     "featured": {
       "type": "featured-collection",
       "settings": {
@@ -133,34 +172,6 @@
         "autoplay": true,
         "show_view_all": true
       }
-    },
-    "banners": {
-      "type": "image-banners",
-      "blocks": {
-        "b1": {
-          "type": "banner",
-          "settings": {
-            "image": "shopify://shop_images/imgi_10_SET0213_3_ef422a9e-9e61-47f8-95eb-bc31484dff1c.jpg",
-            "heading": "New Arrivals",
-            "button_label": "Shop Now",
-            "link": "shopify://collections/new-arrival"
-          }
-        },
-        "b2": {
-          "type": "banner",
-          "settings": {
-            "image": "shopify://shop_images/imgi_6_3-96105505863380_l.jpg",
-            "heading": "kurti sets",
-            "button_label": "Shop Now",
-            "link": "shopify://collections/kurta-sets"
-          }
-        }
-      },
-      "block_order": [
-        "b1",
-        "b2"
-      ],
-      "settings": {}
     },
     "scrolling": {
       "type": "scrolling-text",
@@ -201,7 +212,7 @@
     "image-text": {
       "type": "image-with-text",
       "settings": {
-        "image": "shopify://shop_images/Untitled_design_34.png",
+        "image": "shopify://shop_images/DALL_E_2025-02-18_12.53.35_-_Create_a_versatile_and_professional_logo_for_a_clothing_brand_named_Vedora_._The_logo_should_feature_the_name_Vedora_in_a_clean_modern_typeface_wi.webp",
         "subtitle": "Our Story",
         "heading": "Crafted with Love",
         "text": "<p>Every kurti in our collection is thoughtfully designed, blending traditional Indian craftsmanship with contemporary style. From handpicked fabrics to intricate detailing, we create ethnic wear that celebrates the grace of every woman.</p>",
@@ -220,7 +231,7 @@
             "title": "Returns and Refund Policy",
             "text": "Hassle-free returns within 10 days",
             "link_label": "Learn More",
-            "link_url": "shopify://pages/return-and-exchange-policy"
+            "link_url": "shopify://pages/return-exchange-policy"
           }
         },
         "usp2": {
@@ -240,7 +251,7 @@
             "title": "Customer Support",
             "text": "Dedicated support for all your queries",
             "link_label": "Learn More",
-            "link_url": "shopify://pages/contact"
+            "link_url": "shopify://pages/contact-us"
           }
         }
       },
@@ -264,10 +275,10 @@
   },
   "order": [
     "hero",
-    "hero_banner_nYYJ4f",
     "tabbed",
-    "featured",
     "banners",
+    "hero_banner_nYYJ4f",
+    "featured",
     "scrolling",
     "image-text",
     "usp",
