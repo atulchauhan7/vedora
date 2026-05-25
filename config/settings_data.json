@@ -88,7 +88,7 @@
             "type": "quick_link",
             "settings": {
               "link_label": "Contact Us",
-              "link_url": "/pages/contact"
+              "link_url": "/pages/contact-us"
             }
           },
           "quick_link_3": {
