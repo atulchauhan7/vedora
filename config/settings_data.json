@@ -9,8 +9,8 @@
  */
 {
   "current": {
-    "accent_color": "#3ccbe0",
-    "accent_color_dark": "#249fb0",
+    "accent_color": "#101111",
+    "accent_color_dark": "#141617",
     "text_color": "#1a1a1a",
     "text_muted_color": "#888888",
     "heading_color": "#1a1a1a",
@@ -80,7 +80,6 @@
           "mobile_category_rWLEdA"
         ],
         "settings": {
-          "logo": "shopify://shop_images/Moreons_Logo.png",
           "menu": "",
           "show_announcement": true,
           "show_engage_section": true,
