@@ -5,16 +5,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
 <meta name="theme-color" content="{{ settings.accent_color }}">
 
+<!-- Gokwik theme code start -->
+<link rel="dns-prefetch" href="https://pdp.gokwik.co/">
+<link rel="dns-prefetch" href="https://api.gokwik.co">
+{% render 'gokwik' %}
+<!-- Gokwik theme code End -->
+
 <!-- Preconnect to critical origins -->
 <link rel="preconnect" href="https://cdn.shopify.com" crossorigin>
 <link rel="preconnect" href="https://fonts.shopifycdn.com" crossorigin>
 <link rel="dns-prefetch" href="https://cdn.shopify.com">
 <link rel="dns-prefetch" href="https://fonts.shopifycdn.com">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'">
-<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"></noscript>
 
 <!-- View Transitions API for smooth page transitions -->
 <meta name="view-transition" content="same-origin">
@@ -59,12 +60,10 @@ h1,h2,h3,h4,h5,h6{font-family:var(--font-heading);font-weight:500;line-height:1.
 h1{font-size:clamp(2rem,5vw,3.8rem);font-weight:400;letter-spacing:0.04em}
 .container{width:100%;max-width:var(--container-width);margin:0 auto;padding:0 var(--grid-gutter)}
 .site-header{position:fixed;top:0;left:0;right:0;z-index:1000;padding:0}
-.site-header__inner{position:relative;display:flex;align-items:center;justify-content:space-between;height:82px;padding:0 clamp(16px,3vw,48px);background:var(--color-header-bg);transition:height 0.35s ease,box-shadow 0.35s ease,background 0.35s ease;border-bottom:1px solid var(--color-border,#eee)}
-@media(max-width:1024px){.site-header__inner{height:64px;padding:0 16px}}
-@media(max-width:480px){.site-header__inner{height:56px;padding:0 12px}}
+.site-header__inner{position:relative;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:14px clamp(16px,4vw,52px);background:var(--color-header-bg);transition:all 0.5s cubic-bezier(0.16,1,0.3,1);border-bottom:1px solid transparent}
 .page-loader{position:fixed;top:0;left:0;width:100%;height:100%;background:var(--color-accent);display:flex;align-items:center;justify-content:center;z-index:10000;transition:opacity 0.8s ease,visibility 0.8s ease}
 .page-loader.loaded{opacity:0;visibility:hidden;pointer-events:none}
-.hero-slider__viewport{position:relative;width:100%;height:calc(100vh - var(--header-height,82px) - var(--strip-height,0px));min-height:380px;overflow:hidden}
+.hero-slider__viewport{position:relative;width:100%;height:calc(100vh - var(--header-height,72px) - var(--strip-height,0px));min-height:380px;overflow:hidden}
 .hero-slide{position:absolute;top:0;left:0;width:100%;height:100%;opacity:0}
 .hero-slide--active{opacity:1}
 .hero-slide__media{position:absolute;inset:0}
@@ -79,22 +78,8 @@ h1{font-size:clamp(2rem,5vw,3.8rem);font-weight:400;letter-spacing:0.04em}
 @keyframes fade-in-slide{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 </style>
 
-<!-- Remix Icons — professional icon set (non-render-blocking) -->
-<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" media="print" onload="this.media='all'">
-<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css"></noscript>
-
-<!-- Main stylesheet — split component files (load order = cascade order) -->
-{{ 'theme-base.css'       | asset_url | stylesheet_tag }}
-{{ 'theme-header.css'     | asset_url | stylesheet_tag }}
-{{ 'theme-sections.css'   | asset_url | stylesheet_tag }}
-{{ 'theme-footer.css'     | asset_url | stylesheet_tag }}
-{{ 'theme-drawers.css'    | asset_url | stylesheet_tag }}
-{{ 'theme-product.css'    | asset_url | stylesheet_tag }}
-{{ 'theme-collection.css' | asset_url | stylesheet_tag }}
-{{ 'theme-pages.css'      | asset_url | stylesheet_tag }}
-{{ 'theme-responsive.css' | asset_url | stylesheet_tag }}
-{{ 'theme-overrides.css'  | asset_url | stylesheet_tag }}
+<!-- Main stylesheet -->
+{{ 'luxe-theme.css' | asset_url | stylesheet_tag }}
 
 <!-- Animations CSS loaded async (non-render-blocking) -->
 {{ 'luxe-animations.css' | asset_url | preload_tag: as: 'style' }}
@@ -155,8 +140,6 @@ window.theme = {
 moneyFormat: {{ shop.money_format | json }},
 currency: {{ cart.currency.iso_code | json }},
 cartCount: {{ cart.item_count }},
-goEnabled: {{ settings.goEnable | json }},
-cartRecsHandle: {{ settings.cart_recs_collection | default: 'accessories' | json }},
 routes: {
 cart_url: '{{ routes.cart_url }}',
 cart_add_url: '{{ routes.cart_add_url }}',
@@ -165,62 +148,29 @@ search_url: '{{ routes.search_url }}',
 checkout_url: '{{ routes.checkout_url }}'
 }
 };
-/* Hide page loader as soon as DOM is parsed — don't wait for images/fonts.
-   Without this, the brand-color overlay sits over the page until window.load. */
-(function(){
-  var hidden = false;
-  function hideLoader(){
-    if(hidden) return; hidden = true;
-    var lo = document.getElementById('page-loader');
-    if(lo) lo.classList.add('loaded');
-    document.body.classList.remove('overflow-hidden');
-    if(!document.body.classList.contains('page-loaded')) document.body.classList.add('page-loaded');
-  }
-  if(document.readyState === 'loading'){
-    document.addEventListener('DOMContentLoaded', hideLoader, {once:true});
-  } else {
-    hideLoader();
-  }
-  /* Hard cap so the loader can never stick if DOMContentLoaded is missed */
-  setTimeout(hideLoader, 500);
-})();
+/* Remove page loader fast — don't block content visibility */
+window.addEventListener('load', function(){
+  var lo = document.getElementById('page-loader');
+  if(lo){ requestAnimationFrame(function(){ lo.classList.add('loaded'); }); }
+});
+/* Fallback: always hide loader after 1.5s even if load event hasn't fired */
+setTimeout(function(){
+  var lo = document.getElementById('page-loader');
+  if(lo && !lo.classList.contains('loaded')){ lo.classList.add('loaded'); }
+  document.body.classList.remove('overflow-hidden');
+  if(!document.body.classList.contains('page-loaded')){ document.body.classList.add('page-loaded'); }
+}, 1500);
 </script>
-{% if settings.enable_shopflo %}
-<script>
-(function(){
-  var h=window.location.hostname;
-  var isLocal=(h==='localhost'||h==='127.0.0.1');
-  var realHost={{ shop.permanent_domain | json }};
-  window.Shopflo=Object.assign({},window.Shopflo||{},{autoOnboarding:true});
-  if(isLocal&&realHost){
-    var _fetch=window.fetch;
-    window.fetch=function(url,opts){
-      if(typeof url==='string'&&(url.indexOf('shopUrl=localhost')!==-1||url.indexOf('shop-url=localhost')!==-1||url.indexOf('shop_url=localhost')!==-1)){
-        url=url.replace(/shop[_-]?[Uu]rl=localhost[^&]*/g,function(m){return m.replace(/=localhost[^&]*/,'='+realHost)});
-      }
-      return _fetch.apply(this,arguments);
-    };
-  }
-  var s=document.createElement('script');
-  s.src='https://bridge.shopflo.com/js/shopflo.bundle.js';
-  s.async=true;
-  document.head.appendChild(s);
-})();
-</script>
-{% endif %}
+
 
 <!-- Preload main JS -->
 {{ 'luxe-theme.js' | asset_url | preload_tag: as: 'script' }}
-<script>
-(function(){var d=document.documentElement,w=window.innerWidth;var hh=w>1024?82:w>480?64:56;d.style.setProperty('--header-height',hh+'px');d.style.setProperty('--announcement-height','0px');d.style.setProperty('--announcement-content-offset','0px');d.style.setProperty('--strip-height','0px')})();
-</script>
-{% render 'gokwik' %}
 </head>
 
 <body class="template-{{ template.name }}{% if template.suffix %} template-{{ template.name }}-{{ template.suffix }}{% endif %}" data-animations-enabled="{{ settings.enable_animations }}">
 
-<a class="skip-to-content" href="#MainContent">Skip to main content</a>
-<div class="scroll-progress" aria-hidden="true"></div>
+<a class="skip-to-content" href="#MainContent">Skip to content</a>
+<div class="scroll-progress"></div>
 
 <div id="page-loader" class="page-loader" aria-hidden="true">
 <div class="loader-inner">
@@ -234,10 +184,9 @@ checkout_url: '{{ routes.checkout_url }}'
 
 {% section 'header' %}
 
-
-<script>
-(function(){var d=document.documentElement;var ann=document.querySelector('.announcement-bar');var hdr=document.querySelector('.site-header');var annH=ann?ann.offsetHeight:0;var hh=hdr?hdr.querySelector('.site-header__inner').offsetHeight:64;d.style.setProperty('--header-height',hh+'px');d.style.setProperty('--announcement-height',annH+'px');d.style.setProperty('--announcement-content-offset',annH+'px')})();
-</script>
+{% if template.name == 'index' %}
+{% section 'category-strip' %}
+{% endif %}
 
 {% render 'search-overlay' %}
 
@@ -246,20 +195,18 @@ checkout_url: '{{ routes.checkout_url }}'
 
 {% render 'wishlist-drawer' %}
 
-<main id="MainContent" class="" role="main">
+<main id="MainContent" class="main-content" role="main">
 {{ content_for_layout }}
 </main>
 
-{% section 'usp-strip' %}
-
 {% section 'footer' %}
 
-<div class="floating-actions">
 <button id="back-to-top" class="back-to-top" aria-label="Back to top">
 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 <path d="M18 15l-6-6-6 6"/>
 </svg>
 </button>
+
 {% if settings.whatsapp_number != blank %}
 <a href="https://wa.me/{{ settings.whatsapp_number | remove: '+' | remove: ' ' | remove: '-' }}" class="whatsapp-float" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">
 <span class="whatsapp-float__ring"></span>
@@ -267,7 +214,6 @@ checkout_url: '{{ routes.checkout_url }}'
 <span class="whatsapp-float__tooltip">Chat with us</span>
 </a>
 {% endif %}
-</div>
 
 {% if settings.enable_newsletter_popup %}
 {% render 'newsletter-popup' %}
@@ -275,7 +221,6 @@ checkout_url: '{{ routes.checkout_url }}'
 
 <div class="size-sheet-overlay" id="card-size-sheet-overlay"></div>
 <div class="size-sheet" id="card-size-sheet" aria-hidden="true">
-<div class="size-sheet__drag-handle"></div>
 <div class="size-sheet__header">
 <span class="size-sheet__title">Select Size</span>
 <button class="size-sheet__close" aria-label="Close" type="button">
@@ -291,77 +236,10 @@ checkout_url: '{{ routes.checkout_url }}'
 <div class="cursor-follower-dot"></div>
 {% endif %}
 
-{% render 'bottom-nav' %}
-
-<!-- Toast container (notifications fired by JS) -->
-<div class="toast-stack" id="toast-stack" aria-live="polite" aria-atomic="false"></div>
-
 <script src="{{ 'luxe-theme.js' | asset_url }}" defer></script>
 
 {% if request.design_mode %}
 <script src="{{ 'theme-editor.js' | asset_url }}" defer></script>
-{% endif %}
-
-{% if settings.goEnable %}
-<script>
-/*
- * GoKwik — Back-navigation restore
- * When the user presses browser back after GoKwik opens its checkout
- * overlay, the page may be restored from bfcache with:
- *   - body scroll locked (overflow-hidden class stuck)
- *   - GoKwik iframe / overlay still in DOM
- * This handler cleans up both every time the page becomes visible again.
- */
-(function () {
-  function restorePage() {
-    /* 1. Unlock body scroll */
-    document.body.classList.remove('overflow-hidden');
-    document.documentElement.style.overflow = '';
-    document.documentElement.style.position = '';
-    document.body.style.overflow = '';
-    document.body.style.position = '';
-
-    /* 2. Remove GoKwik iframe and its backdrop if left in DOM */
-    ['#gokwik-iframe', '#gokwik-backdrop', '#gokwik-overlay', '#gk-overlay']
-      .forEach(function (sel) {
-        var el = document.querySelector(sel);
-        if (el) el.remove();
-      });
-
-    /* 3. Remove any GoKwik-added class on body */
-    ['gokwik-open', 'gk-open', 'gk-overlay-open'].forEach(function (cls) {
-      document.body.classList.remove(cls);
-    });
-  }
-
-  /* pageshow fires on both normal load AND bfcache restore;
-     persisted=true means it was a bfcache restore (browser back). */
-  window.addEventListener('pageshow', function (e) {
-    if (e.persisted) {
-      restorePage();
-    }
-  });
-
-  /* visibilitychange catches tab-switch back after GoKwik opens in
-     the same tab and the user alt-tabs / swipes back. */
-  document.addEventListener('visibilitychange', function () {
-    if (document.visibilityState === 'visible') {
-      /* Only clean up if GoKwik iframe is no longer present but
-         body is still locked — means GoKwik was closed externally. */
-      var iframe = document.querySelector('#gokwik-iframe');
-      if (!iframe && document.body.classList.contains('overflow-hidden')) {
-        /* Check none of our own drawers are open before unlocking */
-        var anyDrawerOpen = document.querySelector(
-          '.cart-drawer.open, .mobile-nav.open, .wishlist-drawer.open, .newsletter-popup.open'
-        );
-        if (!anyDrawerOpen) {
-          document.body.classList.remove('overflow-hidden');
-        }
-      }
-    }
-  });
-})();
-</script>
 {% endif %}
 </body>
 </html>

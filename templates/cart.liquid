@@ -8,27 +8,6 @@
 <h1 class="cart-layout__title">Shopping Bag</h1>
 <span class="cart-layout__count">{{ cart.item_count }} {{ cart.item_count | pluralize: 'item', 'items' }}</span>
 </div>
-
-{% assign free_threshold = settings.cart_free_shipping_threshold | default: 999 | times: 100 %}
-{% if free_threshold > 0 %}
-<div class="cart-page-shipping" role="status" aria-live="polite">
-  {% if cart.total_price >= free_threshold %}
-  <div class="cart-page-shipping__msg cart-page-shipping__msg--success">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-    Hooray! You've unlocked <strong>FREE shipping</strong>
-  </div>
-  <div class="cart-page-shipping__bar"><div class="cart-page-shipping__fill" style="width:100%"></div></div>
-  {% else %}
-  {% assign remaining = free_threshold | minus: cart.total_price %}
-  {% assign pct = cart.total_price | times: 100 | divided_by: free_threshold %}
-  <div class="cart-page-shipping__msg">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="1" y="3" width="15" height="13" rx="1"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
-    Add <strong>{{ remaining | money }}</strong> more for <strong>FREE shipping</strong>
-  </div>
-  <div class="cart-page-shipping__bar"><div class="cart-page-shipping__fill" style="width:{{ pct }}%"></div></div>
-  {% endif %}
-</div>
-{% endif %}
 <div class="cart-items">
 {% for item in cart.items %}
 <div class="cart-item" data-line="{{ forloop.index }}" data-key="{{ item.key }}">
@@ -51,178 +30,35 @@
 </div>
 <div class="cart-item__bottom">
 <div class="quantity-selector">
-<button type="button" data-qty-minus aria-label="Decrease quantity">&#8722;</button>
+<button type="button" data-qty-minus>&#8722;</button>
 <input type="number" name="updates[]" value="{{ item.quantity }}" min="0" aria-label="Quantity">
-<button type="button" data-qty-plus aria-label="Increase quantity">+</button>
+<button type="button" data-qty-plus>+</button>
 </div>
 <div class="cart-item__total">{{ item.final_line_price | money }}</div>
-</div>
-<div class="cart-item__actions">
-<button type="button" class="cart-item__action"
-  data-move-to-wishlist
-  data-item-key="{{ item.key }}"
-  data-handle="{{ item.product.handle }}"
-  data-title="{{ item.product.title | escape }}"
-  data-url="{{ item.url }}"
-  data-price="{{ item.final_line_price | money }}"
-  data-image="{{ item.image | image_url: width: 200 }}"
->
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-  Move to Wishlist
-</button>
-<a href="{{ item.url_to_remove }}" class="cart-item__action cart-item__action--danger">
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg>
-  Remove
-</a>
 </div>
 </div>
 </div>
 {% endfor %}
 </div>
-
-{% comment %} Frequently Bought Together — accessories collection via Shopify AJAX API {% endcomment %}
-<section class="cart-recs" aria-labelledby="cart-recs-title" id="cart-recs-section" hidden>
-  <div class="cart-recs__head">
-    <h2 id="cart-recs-title" class="cart-recs__title">Frequently Bought Together</h2>
-    <p class="cart-recs__sub">Accessories our customers pair with this order</p>
-  </div>
-  <div class="cart-recs__scroller" id="cart-recs-track" data-cart-recs-scroller></div>
-  <button type="button" class="cart-recs__nav cart-recs__nav--prev" data-cart-recs-prev aria-label="Previous">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
-  </button>
-  <button type="button" class="cart-recs__nav cart-recs__nav--next" data-cart-recs-next aria-label="Next">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
-  </button>
-</section>
-<script>
-(function () {
-  var cartProductIds = {{ cart.items | map: 'product_id' | json }};
-  var moneyFormat = {{ shop.money_format | json }};
-
-  function formatMoney(priceStr) {
-    var n = parseFloat(priceStr);
-    if (isNaN(n)) return priceStr;
-    var formatted = n.toLocaleString('en-IN', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
-    /* Split {{ }} so Liquid doesn't evaluate these as template tags */
-    var oc='{'+'{', cc='}'+'}', fmt=moneyFormat
-      .replace(oc+'amount'+cc, n.toFixed(2))
-      .replace(oc+'amount_no_decimals'+cc, formatted)
-      .replace(oc+'amount_with_comma_separator'+cc, formatted)
-      .replace(oc+'amount_no_decimals_with_comma_separator'+cc, formatted);
-    return (fmt || ('&#8377;' + formatted)).replace(/Rs\.?\s*/g, '₹');
-  }
-
-  function sizedImg(src, width) {
-    if (!src) return '';
-    var base = src.indexOf('?') !== -1 ? src.split('?')[0] : src;
-    return base + '?width=' + width;
-  }
-
-  function buildCard(p) {
-    var v = p.variants && p.variants[0];
-    var price = v ? formatMoney(v.price) : '';
-    var compareAt = v && v.compare_at_price && parseFloat(v.compare_at_price) > parseFloat(v.price) ? v.compare_at_price : null;
-    var badge = compareAt
-      ? '<span class="cart-rec__badge">' + Math.round((parseFloat(compareAt) - parseFloat(v.price)) / parseFloat(compareAt) * 100) + '% OFF</span>'
-      : '';
-    var img = '';
-    if (p.images && p.images.length) {
-      var alt = (p.images[0].alt || p.title).replace(/"/g, '&quot;');
-      img = '<img src="' + sizedImg(p.images[0].src, 260) + '" alt="' + alt + '" loading="lazy" width="260" height="325">';
-    }
-    return '<a href="/products/' + p.handle + '" class="cart-rec" aria-label="' + p.title.replace(/"/g, '&quot;') + '">'
-      + '<div class="cart-rec__img">' + img + badge + '</div>'
-      + '<div class="cart-rec__body">'
-      + '<h3 class="cart-rec__title">' + p.title + '</h3>'
-      + '<div class="cart-rec__price-row">'
-      + '<span class="cart-rec__price">' + price + '</span>'
-      + (compareAt ? '<span class="cart-rec__compare">' + formatMoney(compareAt) + '</span>' : '')
-      + '</div></div></a>';
-  }
-
-  var recsHandle = {{ settings.cart_recs_collection | default: 'accessories' | json }};
-  fetch('/collections/' + recsHandle + '/products.json?limit=20&fields=id,handle,title,images,variants')
-    .then(function (r) { return r.ok ? r.json() : Promise.reject(r.status); })
-    .then(function (data) {
-      var products = (data.products || [])
-        .filter(function (p) { return cartProductIds.indexOf(p.id) === -1; })
-        .slice(0, 8);
-
-      if (!products.length) return;
-
-      var section = document.getElementById('cart-recs-section');
-      var track = document.getElementById('cart-recs-track');
-      track.innerHTML = products.map(buildCard).join('');
-      section.removeAttribute('hidden');
-
-      var prev = section.querySelector('[data-cart-recs-prev]');
-      var next = section.querySelector('[data-cart-recs-next]');
-      var amt = 280;
-      prev.addEventListener('click', function () { track.scrollBy({ left: -amt, behavior: 'smooth' }); });
-      next.addEventListener('click', function () { track.scrollBy({ left: amt, behavior: 'smooth' }); });
-    })
-    .catch(function () { /* silently fail — section stays hidden */ });
-})();
-</script>
 </div>
 <div class="cart-layout__sidebar">
 <div class="cart-summary">
 <h2 class="cart-summary__title">Order Summary</h2>
-
-<div class="cart-summary__coupon">
-  <div class="cart-summary__coupon-row">
-    <input type="text" id="cart-coupon-code" class="cart-summary__coupon-input" placeholder="Enter coupon code" autocomplete="off" aria-label="Coupon code">
-    <button type="button" class="cart-summary__coupon-btn" data-cart-apply-coupon>Apply</button>
-  </div>
-  <p class="cart-summary__coupon-hint">Codes apply at checkout.</p>
-</div>
-
-{% render 'available-offers', variant: 'cart' %}
-
 <div class="cart-summary__row">
 <span>Subtotal ({{ cart.item_count }} items)</span>
 <span>{{ cart.total_price | money }}</span>
 </div>
-{% if cart.total_discounts > 0 %}
-<div class="cart-summary__row cart-summary__row--discount">
-<span>Discount</span>
-<span>− {{ cart.total_discounts | money }}</span>
-</div>
-{% endif %}
 <div class="cart-summary__row cart-summary__row--muted">
 <span>Shipping</span>
-<span>{% if cart.total_price >= free_threshold %}<strong style="color:#16a34a">FREE</strong>{% else %}Calculated at checkout{% endif %}</span>
+<span>Calculated at checkout</span>
 </div>
 <div class="cart-summary__divider"></div>
 <div class="cart-summary__row cart-summary__row--total">
 <span>Total</span>
 <span>{{ cart.total_price | money }}</span>
 </div>
-<button type="button" id="checkout2" name="checkout2" class="btn btn--primary btn--large btn--full cart-summary__checkout" onclick="handleFloCheckoutBtn()">
-  <span class="cart-summary__checkout-label">
-    <span class="cart-summary__checkout-main">Proceed to Checkout</span>
-    <span class="cart-summary__checkout-total">{{ cart.total_price | money }}</span>
-  </span>
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
-</button>
-
-<a href="{{ routes.all_products_collection_url }}" class="cart-summary__continue">← Continue shopping</a>
-
-<div class="cart-summary__trust">
-  <div class="cart-summary__trust-item">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-    <span>100% Secure Payments</span>
-  </div>
-  <div class="cart-summary__trust-item">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
-    <span>Easy 7-day Returns</span>
-  </div>
-  <div class="cart-summary__trust-item">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="3"/></svg>
-    <span>Cash on Delivery Available</span>
-  </div>
-</div>
-
+{% render 'gokwik-checkout' %}
+<button type="submit" name="checkout" class="btn btn--primary btn--large btn--full cart-summary__checkout shopifycheckoutbtn" style="display:none">Proceed to Checkout</button>
 <div class="cart-summary__secure">
 <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
 <span>Secure checkout · Coupon codes can be applied at checkout</span>

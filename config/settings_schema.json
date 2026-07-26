@@ -18,14 +18,14 @@
         "type": "color",
         "id": "accent_color",
         "label": "Accent color",
-        "default": "#3ccbe0",
+        "default": "#e12d2d",
         "info": "Used for buttons, links, and highlights"
       },
       {
         "type": "color",
         "id": "accent_color_dark",
         "label": "Accent color (dark)",
-        "default": "#249fb0"
+        "default": "#c12626"
       },
       {
         "type": "color",
@@ -79,7 +79,7 @@
         "type": "color",
         "id": "header_text_color",
         "label": "Header text/icon color",
-        "default": "#3ccbe0"
+        "default": "#e12d2d"
       }
     ]
   },
@@ -169,29 +169,133 @@
     ]
   },
   {
-    "name": "Integrations",
+    "name": "Gokwik",
     "settings": [
       {
+        "type": "text",
+        "id": "mid",
+        "label": "Merchant Id"
+      },
+      {
         "type": "header",
-        "content": "GoKwik"
+        "content": "Select environment"
+      },
+      {
+        "type": "select",
+        "id": "envType",
+        "label": "Environment",
+        "options": [
+          { "value": "qa", "label": "QA" },
+          { "value": "sandbox", "label": "Sandbox" },
+          { "value": "production", "label": "Production" }
+        ]
+      },
+      {
+        "type": "checkbox",
+        "id": "hideFlow",
+        "label": "Button hide without disable",
+        "info": "To hide only button without disable Gokwik flow",
+        "default": false
+      },
+      {
+        "type": "header",
+        "content": "Data Tracking"
+      },
+      {
+        "type": "text",
+        "id": "ga4Gokwik",
+        "label": "Enter Google Analytics ID (GA4)",
+        "placeholder": "Starts with GA- ...."
+      },
+      {
+        "type": "text",
+        "id": "fbpixel",
+        "label": "FB Pixel"
+      },
+      {
+        "type": "text",
+        "id": "snapPixel",
+        "label": "Snapchat Pixel"
+      },
+      {
+        "type": "header",
+        "content": "Checkout Button"
       },
       {
         "type": "checkbox",
         "id": "goEnable",
-        "label": "Enable GoKwik checkout",
-        "default": false,
-        "info": "Loads GoKwik checkout. When enabled, hides the standard Shopify checkout button and shows GoKwik instead."
+        "label": "Enable Checkout Button",
+        "info": "To insert button use {% include 'gokwik-checkout'%}"
+      },
+      {
+        "type": "color",
+        "id": "priClr",
+        "label": "Primary Color",
+        "default": "#000000"
+      },
+      {
+        "type": "color",
+        "id": "secClr",
+        "label": "Secondary Color",
+        "default": "#ffffff"
+      },
+      {
+        "type": "text",
+        "id": "main-titile",
+        "label": "Button Text",
+        "default": "Checkout"
       },
       {
         "type": "header",
-        "content": "Shopflo"
+        "content": "Buy Now Button"
       },
       {
         "type": "checkbox",
-        "id": "enable_shopflo",
-        "label": "Enable Shopflo checkout",
-        "default": false,
-        "info": "Loads the Shopflo checkout bridge script. Disable to use Shopify's native checkout."
+        "id": "goBuynowEnable",
+        "label": "Enable Buynow Button",
+        "info": "To insert button use {% include 'gokwik-buy-now'%}"
+      },
+      {
+        "type": "color",
+        "id": "btnBClr",
+        "label": "Background Color",
+        "default": "#000000"
+      },
+      {
+        "type": "color",
+        "id": "btnTextClr",
+        "label": "Text Color",
+        "default": "#ffffff"
+      },
+      {
+        "type": "text",
+        "id": "buyNowText",
+        "label": "Buy Now Button Text",
+        "default": "Buy It Now"
+      },
+      {
+        "type": "header",
+        "content": "Other Settings"
+      },
+      {
+        "type": "text",
+        "id": "sub-titile",
+        "label": "Button Sub Text"
+      },
+      {
+        "type": "checkbox",
+        "id": "enableLogo",
+        "label": "Enable Logo"
+      },
+      {
+        "type": "checkbox",
+        "id": "enableIntlFlow",
+        "label": "Enable International Flow"
+      },
+      {
+        "type": "checkbox",
+        "id": "enableBannertext",
+        "label": "Enable Banner Text"
       }
     ]
   },
@@ -217,17 +321,6 @@
         "id": "enable_newsletter_popup",
         "label": "Enable newsletter popup",
         "default": true
-      },
-      {
-        "type": "header",
-        "content": "Page loader"
-      },
-      {
-        "type": "text",
-        "id": "loader_tagline",
-        "label": "Loader tagline",
-        "default": "Curated for you",
-        "info": "Text shown below the brand name on the loading screen"
       }
     ]
   },
@@ -353,50 +446,26 @@
       {
         "type": "text",
         "id": "product_trust_1",
-        "label": "Trust badge 1 — title",
-        "default": "Free Shipping"
-      },
-      {
-        "type": "text",
-        "id": "product_trust_1_sub",
-        "label": "Trust badge 1 — subtext",
-        "default": "On orders ₹999+"
+        "label": "Trust badge 1",
+        "default": "Free Shipping ₹999+"
       },
       {
         "type": "text",
         "id": "product_trust_2",
-        "label": "Trust badge 2 — title",
+        "label": "Trust badge 2",
         "default": "10-Day Returns"
       },
       {
         "type": "text",
-        "id": "product_trust_2_sub",
-        "label": "Trust badge 2 — subtext",
-        "default": "Hassle-free policy"
-      },
-      {
-        "type": "text",
         "id": "product_trust_3",
-        "label": "Trust badge 3 — title",
+        "label": "Trust badge 3",
         "default": "Secure Checkout"
       },
       {
         "type": "text",
-        "id": "product_trust_3_sub",
-        "label": "Trust badge 3 — subtext",
-        "default": "100% safe & encrypted"
-      },
-      {
-        "type": "text",
         "id": "product_trust_4",
-        "label": "Trust badge 4 — title",
+        "label": "Trust badge 4",
         "default": "COD Available"
-      },
-      {
-        "type": "text",
-        "id": "product_trust_4_sub",
-        "label": "Trust badge 4 — subtext",
-        "default": "Pay at your door"
       },
       {
         "type": "header",
@@ -454,91 +523,6 @@
         "label": "Progress message",
         "default": "Add <strong>[amount]</strong> more for <strong>free shipping</strong>",
         "info": "Use [amount] as placeholder for the remaining amount"
-      },
-      {
-        "type": "header",
-        "content": "Available Offers (shown on PDP & Cart)"
-      },
-      {
-        "type": "checkbox",
-        "id": "offers_enabled",
-        "label": "Show available offers",
-        "default": true
-      },
-      {
-        "type": "text",
-        "id": "offer1_code",
-        "label": "Offer 1 — Code",
-        "default": "SAVE10"
-      },
-      {
-        "type": "text",
-        "id": "offer1_title",
-        "label": "Offer 1 — Title",
-        "default": "10% off above ₹499"
-      },
-      {
-        "type": "text",
-        "id": "offer1_desc",
-        "label": "Offer 1 — Description",
-        "default": "Use code at checkout. Valid on all orders."
-      },
-      {
-        "type": "text",
-        "id": "offer2_code",
-        "label": "Offer 2 — Code",
-        "default": "FIRST20"
-      },
-      {
-        "type": "text",
-        "id": "offer2_title",
-        "label": "Offer 2 — Title",
-        "default": "20% off on first order"
-      },
-      {
-        "type": "text",
-        "id": "offer2_desc",
-        "label": "Offer 2 — Description",
-        "default": "New users only. Max discount ₹300."
-      },
-      {
-        "type": "text",
-        "id": "offer3_code",
-        "label": "Offer 3 — Code",
-        "default": "PREPAID5"
-      },
-      {
-        "type": "text",
-        "id": "offer3_title",
-        "label": "Offer 3 — Title",
-        "default": "Extra 5% off on prepaid"
-      },
-      {
-        "type": "text",
-        "id": "offer3_desc",
-        "label": "Offer 3 — Description",
-        "default": "Pay online and save more. Auto-applies at checkout."
-      },
-      {
-        "type": "header",
-        "content": "Frequently Bought Together"
-      },
-      {
-        "type": "text",
-        "id": "cart_recs_collection",
-        "label": "Recommendations collection handle",
-        "default": "accessories",
-        "info": "Handle of the collection to pull recommendations from on the cart page and cart drawer. e.g. 'accessories'"
-      },
-      {
-        "type": "header",
-        "content": "Branding"
-      },
-      {
-        "type": "text",
-        "id": "cart_drawer_title",
-        "label": "Cart drawer title",
-        "default": "My Bag"
       }
     ]
   },

@@ -1,6 +1,6 @@
 {% if section.settings.show_section %}
 {% if section.blocks.size > 0 %}
-<nav class="" aria-label="Shop by category">
+<nav class="category-strip" aria-label="Shop by category">
   <div class="category-strip__track" role="list">
     {% for block in section.blocks %}
     <a href="{{ block.settings.link | default: '#' }}"
@@ -19,9 +19,6 @@
         >
         {% else %}
         {{ 'collection-' | append: forloop.index | placeholder_svg_tag: 'placeholder-svg' }}
-        {% endif %}
-        {% if block.settings.badge_label != blank %}
-        <span class="category-strip__badge category-strip__badge--{{ block.settings.badge_color | default: 'green' }}">{{ block.settings.badge_label | escape }}</span>
         {% endif %}
       </span>
       <span class="category-strip__label">{{ block.settings.label }}</span>
@@ -68,24 +65,6 @@
           "type": "url",
           "id": "link",
           "label": "Link"
-        },
-        {
-          "type": "text",
-          "id": "badge_label",
-          "label": "Badge label",
-          "info": "Optional tag shown on the image (e.g. New, Hot, Sale)"
-        },
-        {
-          "type": "select",
-          "id": "badge_color",
-          "label": "Badge color",
-          "options": [
-            {"value":"green","label":"Green"},
-            {"value":"red","label":"Red"},
-            {"value":"yellow","label":"Yellow"},
-            {"value":"accent","label":"Brand accent"}
-          ],
-          "default": "green"
         }
       ]
     }
