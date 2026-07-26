@@ -1,5 +1,5 @@
 <section class="section--no-padding image-text {% if section.settings.reverse %}image-text--reversed{% endif %}" data-section-id="{{ section.id }}">
-<div class="image-text__media image-reveal" data-animate="fade-in">
+<div class="image-text__media image-reveal{% if section.settings.image_fit == 'contain' %} image-text__media--contain{% endif %}" data-animate="fade-in">
 {% if section.settings.image != blank %}
 <img 
 src="{{ section.settings.image | image_url: width: 800 }}"
@@ -37,5 +37,5 @@ height="{{ 1200 | divided_by: section.settings.image.aspect_ratio | round }}"
 </section>
 
 {% schema %}
-{"name":"Image with Text","settings":[{"type":"image_picker","id":"image","label":"Image"},{"type":"text","id":"subtitle","label":"Subtitle","default":"Our Story"},{"type":"text","id":"heading","label":"Heading","default":"Everyday Elegance"},{"type":"richtext","id":"text","label":"Text","default":"\u003cp\u003eEffortlessly stylish and endlessly versatile, our collection is perfect for any occasion. Dress them up or down for a timeless, classic look.\u003c/p\u003e"},{"type":"text","id":"button_label","label":"Button label","default":"Shop Collection"},{"type":"url","id":"button_link","label":"Button link"},{"type":"checkbox","id":"reverse","label":"Reverse layout","default":false}],"presets":[{"name":"Image with Text"}]}
+{"name":"Image with Text","settings":[{"type":"image_picker","id":"image","label":"Image"},{"type":"select","id":"image_fit","label":"Image fit","info":"Cover fills the area (best for photos). Contain shows the full image centred (best for logos).","options":[{"value":"cover","label":"Cover"},{"value":"contain","label":"Contain"}],"default":"contain"},{"type":"text","id":"subtitle","label":"Subtitle","default":"Our Story"},{"type":"text","id":"heading","label":"Heading","default":"Everyday Elegance"},{"type":"richtext","id":"text","label":"Text","default":"\u003cp\u003eEffortlessly stylish and endlessly versatile, our collection is perfect for any occasion. Dress them up or down for a timeless, classic look.\u003c/p\u003e"},{"type":"text","id":"button_label","label":"Button label","default":"Shop Collection"},{"type":"url","id":"button_link","label":"Button link"},{"type":"checkbox","id":"reverse","label":"Reverse layout","default":false}],"presets":[{"name":"Image with Text"}]}
 {% endschema %}

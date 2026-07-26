@@ -1,12 +1,19 @@
 <section class="section tabbed-collections" data-section-id="{{ section.id }}">
 <div class="container">
 <div class="tabbed-collections__header" data-animate="fade-up">
+{% if section.settings.title != blank %}
+<div class="bwk-section__head">
+<h2 class="bwk-section__title split-words">{{ section.settings.title }}</h2>
+</div>
+{% endif %}
+<div class="tabbed-collections__tabs-row">
 <div class="tabbed-collections__tabs" role="tablist" aria-label="Collection tabs">
 {% for block in section.blocks %}
 <button class="tabbed-collections__tab {% if forloop.first %}active{% endif %}" data-tab-trigger="{{ block.id }}" role="tab" aria-selected="{% if forloop.first %}true{% else %}false{% endif %}" aria-controls="panel-{{ block.id }}" id="tab-{{ block.id }}" {{ block.shopify_attributes }}>
 {{ block.settings.tab_label }}
 </button>
 {% endfor %}
+</div>
 </div>
 </div>
 
@@ -25,14 +32,6 @@
 </div>
 {% endfor %}
 
-{% if section.settings.show_view_all %}
-<div class="text-center" style="margin-top: 5px;" data-animate="fade-up">
-<a href="{{ routes.all_products_collection_url }}" class="btn btn--secondary btn--view-all">
-View All Products
-<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-</a>
-</div>
-{% endif %}
 </div>
 </section>
 
