@@ -5184,6 +5184,24 @@ body:has(#gokwik-iframe) .product-info__cta-group{display:none!important}
 /* ================================================================
    TARGETED FIXES (mobile nav, form borders, captcha badge)
    ================================================================ */
+/* Touch product cards should navigate on the first tap. Disable the
+   desktop-only alternate image hover layer on coarse pointers. */
+@media (hover:none), (pointer:coarse){
+  .product-card__media,
+  .product-card__media-wrap{
+    -webkit-tap-highlight-color:transparent !important;
+  }
+  .product-card__image--hover{
+    display:none !important;
+    opacity:0 !important;
+    pointer-events:none !important;
+  }
+  .product-card:hover .product-card__image,
+  .product-card:hover .product-card__media-wrap img{
+    transform:none !important;
+  }
+}
+
 /* Hide the fixed announcement bar while the mobile nav drawer is open.
    The .site-header is its own stacking context (z-index:1000), so the
    drawer can never paint above the body-level announcement bar

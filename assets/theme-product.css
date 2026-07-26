@@ -18,9 +18,7 @@
 .pdp-ticket__heading{font-size:0.78rem;font-weight:600;color:var(--color-heading);letter-spacing:0.01em;line-height:1.3}
 .pdp-ticket__sub{font-size:0.62rem;color:var(--color-text-muted);letter-spacing:0.01em}
 .pdp-ticket__divider{width:0;border-left:2px dashed rgba(var(--color-accent-rgb),0.25);position:relative;margin:8px 0}
-.pdp-ticket__divider::before,.pdp-ticket__divider::after{content:'';position:absolute;left:50%;width:16px;height:16px;background:var(--color-bg,#f7f7f7);border:1.5px solid rgba(var(--color-accent-rgb),0.22);border-radius:50%;transform:translateX(-50%)}
-.pdp-ticket__divider::before{top:-16px}
-.pdp-ticket__divider::after{bottom:-16px}
+.pdp-ticket__divider::before,.pdp-ticket__divider::after{content:none}
 .pdp-ticket__right{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0.6rem 1.1rem;gap:4px;min-width:120px;background:rgba(var(--color-accent-rgb),0.04)}
 .pdp-ticket__label{font-size:0.52rem;font-weight:600;text-transform:uppercase;letter-spacing:0.18em;color:var(--color-text-muted)}
 .pdp-ticket__code{display:inline-flex;align-items:center;gap:5px;padding:5px 14px;font-size:0.82rem;font-weight:700;font-family:monospace;letter-spacing:0.14em;color:var(--color-accent);background:rgba(var(--color-accent-rgb),0.1);border:1.5px dashed var(--color-accent);border-radius:6px;cursor:pointer;transition:all 0.25s;position:relative}
@@ -3308,6 +3306,10 @@ button[data-add-to-cart],input[data-add-to-cart]{
 
 /* --- Promo ticket — slightly tighter on mobile --- */
 @media(max-width:480px){
+  .pdp-ticket{overflow:hidden!important}
+  .pdp-ticket__left{align-items:flex-start!important}
+  .pdp-ticket__divider{margin:0 12px!important}
+  .pdp-ticket__divider::before,.pdp-ticket__divider::after{content:none!important}
   .pdp-ticket__right{min-width:100px!important;padding:0.5rem 0.75rem!important;}
   .pdp-ticket__code{font-size:0.75rem!important;padding:4px 10px!important;}
 }
