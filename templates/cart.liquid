@@ -198,7 +198,7 @@
 <span>Total</span>
 <span>{{ cart.total_price | money }}</span>
 </div>
-<button type="button" id="checkout2" name="checkout2" class="btn btn--primary btn--large btn--full cart-summary__checkout" onclick="handleFloCheckoutBtn()">
+<button type="submit" id="checkout2" name="checkout" class="btn btn--primary btn--large btn--full cart-summary__checkout">
   <span class="cart-summary__checkout-label">
     <span class="cart-summary__checkout-main">Proceed to Checkout</span>
     <span class="cart-summary__checkout-total">{{ cart.total_price | money }}</span>
