@@ -9,8 +9,8 @@
  */
 {
   "current": {
-    "accent_color": "#101111",
-    "accent_color_dark": "#141617",
+    "accent_color": "#000000",
+    "accent_color_dark": "#000000",
     "text_color": "#1a1a1a",
     "text_muted_color": "#888888",
     "heading_color": "#1a1a1a",
@@ -21,81 +21,53 @@
     "body_font": "poppins_n4",
     "container_width": "1440px",
     "grid_gutter": "20px",
-    "section_spacing": 40,
-    "border_radius": 4,
+    "section_spacing": 60,
+    "border_radius": 0,
     "text_direction": "ltr",
+    "mid": "19ukxacyntmf",
+    "envType": "production",
+    "hideFlow": false,
     "goEnable": true,
+    "priClr": "#000000",
+    "secClr": "#ffffff",
+    "main-titile": "Checkout",
+    "goBuynowEnable": true,
+    "btnBClr": "#000000",
+    "btnTextClr": "#ffffff",
+    "buyNowText": "Buy It Now",
     "enable_animations": true,
-    "enable_custom_cursor": true,
+    "enable_custom_cursor": false,
     "enable_newsletter_popup": false,
-    "social_instagram": "https://www.instagram.com/labeldhirai/",
-    "whatsapp_number": "+918690276328",
-    "product_promo_enabled": false,
-    "product_promo_text": "Buy 2 Get 30% Off",
-    "product_promo_code": "SUMMER30",
+    "whatsapp_number": "+919166881552",
+    "product_promo_enabled": true,
+    "product_promo_text": "Flat 100 Rupees Off On First order",
+    "product_promo_code": "FIRST100",
     "product_show_rating": true,
     "product_delivery_min_days": 5,
     "product_delivery_max_days": 7,
-    "product_tax_note": "incl. of all taxes <span style=\"display:block;color:red;font-size:0.75rem;font-weight:700;margin-top:4px\">🎁 Free gift on prepaid orders</span>",
+    "product_tax_note": "incl. of all taxes <span style=\"display:block;color:#F4A610;font-size:0.75rem;font-weight:600;margin-top:4px\">🎁 Free gift on prepaid orders</span>",
     "product_trust_1": "Free Shipping ₹999+",
     "product_trust_2": "10-Day Returns",
     "product_trust_3": "Secure Checkout",
     "product_trust_4": "COD Available",
     "product_show_share": true,
-    "cart_show_shipping_bar": true,
-    "offer1_code": "summer30",
-    "offer1_title": "30% off on minimum purchase of 2 items",
-    "offer2_code": "",
-    "offer2_title": "",
-    "offer2_desc": "",
-    "offer3_code": "",
-    "offer3_title": "",
-    "offer3_desc": "",
-    "favicon": "shopify://shop_images/Untitled_design_34.png",
-    "mid": "1937lhjque1z",
-    "envType": "production",
-    "goBuynowEnable": true,
+    "favicon": "shopify://shop_images/LOGO_GULAAB_GALI_PNG_2.png",
     "sections": {
       "announcement-bar": {
         "type": "announcement-bar",
         "settings": {
           "show_announcement": true,
-          "text": "Flat 10% Off On Everything",
+          "text": "<b>Flat 10% Off on prepaid orders</b>",
           "link": "",
           "timer_end": ""
         }
       },
       "header": {
         "type": "header",
-        "blocks": {
-          "mobile_category_rWLEdA": {
-            "type": "mobile_category",
-            "settings": {
-              "label": "Men",
-              "link": ""
-            }
-          }
-        },
-        "block_order": [
-          "mobile_category_rWLEdA"
-        ],
         "settings": {
-          "menu": "",
-          "show_announcement": true,
-          "show_engage_section": true,
-          "find_store_url": "",
-          "track_order_url": "",
-          "show_utility_bar": true,
-          "utility_link_1_label": "Offers",
-          "utility_link_1_url": "",
-          "utility_link_2_label": "New Arrivals",
-          "utility_link_2_url": "",
-          "utility_link_3_label": "Best Sellers",
-          "utility_link_3_url": "",
-          "utility_link_4_label": "Track Order",
-          "utility_link_4_url": "",
-          "utility_link_5_label": "Contact Us",
-          "utility_link_5_url": ""
+          "logo": "shopify://shop_images/transparent_bg.png",
+          "menu": "main-menu",
+          "show_announcement": true
         }
       },
       "cart-drawer": {
@@ -105,38 +77,6 @@
       "footer": {
         "type": "footer",
         "blocks": {
-          "benefit_1": {
-            "type": "benefit",
-            "settings": {
-              "icon": "shield",
-              "title": "Secure Payment",
-              "text": "100% secure transactions"
-            }
-          },
-          "benefit_2": {
-            "type": "benefit",
-            "settings": {
-              "icon": "returns",
-              "title": "Easy Returns",
-              "text": "10-day hassle-free returns"
-            }
-          },
-          "benefit_3": {
-            "type": "benefit",
-            "settings": {
-              "icon": "truck",
-              "title": "Fast Delivery",
-              "text": "Pan-India shipping"
-            }
-          },
-          "benefit_4": {
-            "type": "benefit",
-            "settings": {
-              "icon": "support",
-              "title": "Customer Support",
-              "text": "Mon–Sat, 10 AM – 6 PM"
-            }
-          },
           "quick_link_1": {
             "type": "quick_link",
             "settings": {
@@ -148,7 +88,7 @@
             "type": "quick_link",
             "settings": {
               "link_label": "Contact Us",
-              "link_url": "shopify://pages/contact-us"
+              "link_url": "/pages/contact-us"
             }
           },
           "quick_link_3": {
@@ -162,7 +102,7 @@
             "type": "quick_link",
             "settings": {
               "link_label": "Return and Exchange Policy",
-              "link_url": "shopify://pages/return-and-exchange-policy"
+              "link_url": "shopify://pages/return-exchange-policy"
             }
           },
           "quick_link_5": {
@@ -181,10 +121,6 @@
           }
         },
         "block_order": [
-          "benefit_1",
-          "benefit_2",
-          "benefit_3",
-          "benefit_4",
           "quick_link_1",
           "quick_link_2",
           "quick_link_3",
@@ -195,8 +131,8 @@
         "settings": {
           "about_text": "",
           "address_text": "G1-30, Apparel Park, Jagatpura, Jaipur, Rajasthan, 302017",
-          "whatsapp_number": "+918690276328",
-          "support_email": "dhiraiapparelsprivatelimited@gmail.com",
+          "whatsapp_number": "",
+          "support_email": "Care@vedora.in",
           "quick_links_heading": "Quick Links"
         }
       },
@@ -254,22 +190,14 @@
         "settings": {
           "show_section": true
         }
-      },
-      "usp-strip": {
-        "type": "usp-strip",
-        "settings": {
-          "show_section": true,
-          "background": "light",
-          "speed": 40
-        }
       }
     },
     "content_for_index": []
   },
   "presets": {
     "BlueMnky": {
-      "accent_color": "#3ccbe0",
-      "accent_color_dark": "#3ccbe0",
+      "accent_color": "#b22066",
+      "accent_color_dark": "#b22066",
       "text_color": "#1a1a1a",
       "text_muted_color": "#888888",
       "heading_color": "#1a1a1a",
@@ -318,12 +246,63 @@
         },
         "footer": {
           "type": "footer",
+          "blocks": {
+            "quick_link_1": {
+              "type": "quick_link",
+              "settings": {
+                "link_label": "Search",
+                "link_url": "/search"
+              }
+            },
+            "quick_link_2": {
+              "type": "quick_link",
+              "settings": {
+                "link_label": "Contact Us",
+                "link_url": "/pages/contact-us"
+              }
+            },
+            "quick_link_3": {
+              "type": "quick_link",
+              "settings": {
+                "link_label": "Privacy Policy",
+                "link_url": "/pages/privacy-policy"
+              }
+            },
+            "quick_link_4": {
+              "type": "quick_link",
+              "settings": {
+                "link_label": "Return and Exchange Policy",
+                "link_url": "/pages/return-and-exchange-policy"
+              }
+            },
+            "quick_link_5": {
+              "type": "quick_link",
+              "settings": {
+                "link_label": "Shipping Policy",
+                "link_url": "/pages/shipping-policy"
+              }
+            },
+            "quick_link_6": {
+              "type": "quick_link",
+              "settings": {
+                "link_label": "Terms and Conditions",
+                "link_url": "/pages/terms-and-conditions"
+              }
+            }
+          },
+          "block_order": [
+            "quick_link_1",
+            "quick_link_2",
+            "quick_link_3",
+            "quick_link_4",
+            "quick_link_5",
+            "quick_link_6"
+          ],
           "settings": {
             "about_text": "Jolliet Group — we curate premium products for those who appreciate quality, craftsmanship, and timeless design.",
             "address_text": "",
             "whatsapp_number": "+917743886611",
-            "support_email": "support@jolliet.in",
-            "quick_links_heading": "Quick Links"
+            "support_email": "support@jolliet.in"
           }
         }
       },
