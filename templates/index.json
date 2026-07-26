@@ -85,8 +85,8 @@
         "slide_U8gDMy": {
           "type": "slide",
           "settings": {
-            "image": "shopify://shop_images/IMG_1452_JPG.jpg",
-            "video": "",
+            "image": "shopify://shop_images/950x1350_0013_SPP_5790_9eecfd0e-6c02-4348-9552-a67a8e0b0b5e.webp",
+            "video": "shopify://collections/best-seller",
             "subtitle": "",
             "heading": ""
           }
@@ -362,14 +362,14 @@
           "type": "tab",
           "settings": {
             "tab_label": "Salwar",
-            "collection": "farshi-salwar-set"
+            "collection": "ethnic-solids"
           }
         },
         "tab3": {
           "type": "tab",
           "settings": {
             "tab_label": "Coord",
-            "collection": "co-ord-sets"
+            "collection": "suit-sets"
           }
         }
       },
