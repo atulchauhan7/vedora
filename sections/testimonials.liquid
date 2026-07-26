@@ -1,12 +1,7 @@
 <section class="section" data-section-id="{{ section.id }}" style="background: var(--color-surface);">
 <div class="container">
-<div class="section-header--with-nav" data-animate="fade-up">
-<div>
-{% if section.settings.subtitle != blank %}
-<div class="section-header__subtitle">{{ section.settings.subtitle }}</div>
-{% endif %}
-<h2 class="section-header__title split-words">{{ section.settings.title }}</h2>
-</div>
+<div class="bwk-section__head" data-animate="fade-up">
+<h2 class="bwk-section__title split-words">{{ section.settings.title }}</h2>
 <div class="carousel__nav">
 <button class="carousel__btn carousel__btn--prev" data-carousel-prev aria-label="Previous testimonial">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M15 18l-6-6 6-6"/></svg>

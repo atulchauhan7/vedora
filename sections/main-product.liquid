@@ -1,16 +1,6 @@
 <div class="product-page">
 <div class="container">
 
-<nav class="product-breadcrumbs" aria-label="Breadcrumb">
-<a href="{{ routes.root_url }}">Home</a>
-<span aria-hidden="true">/</span>
-{% if product.collections.size > 0 %}
-<a href="{{ product.collections.first.url }}">{{ product.collections.first.title }}</a>
-<span aria-hidden="true">/</span>
-{% endif %}
-<span class="product-breadcrumbs__current">{{ product.title | truncate: 40 }}</span>
-</nav>
-
 {% comment %} --- Resolve MRP once: prefer compare_at_price, fall back to mrp-XXX tag --- {% endcomment %}
 {% assign mrp = 0 %}
 {% assign price_num = product.price | divided_by: 100 %}
@@ -32,24 +22,47 @@
 
 <!-- === GALLERY === -->
 <div class="product-gallery product-gallery--slider">
+
+{% comment %} Desktop: vertical thumbnail sidebar {% endcomment %}
+{% if product.images.size > 1 %}
+<div class="product-gallery__thumbs-sidebar">
+  {% for image in product.images limit: 8 %}
+  <button class="product-gallery__thumb-side {% if forloop.first %}active{% endif %}"
+          type="button"
+          data-slide="{{ forloop.index0 }}"
+          aria-label="View image {{ forloop.index }}">
+    <img src="{{ image | image_url: width: 120 }}"
+         alt="{{ image.alt | default: product.title | escape }}"
+         loading="lazy"
+         decoding="async"
+         width="120"
+         height="160">
+  </button>
+  {% endfor %}
+</div>
+{% endif %}
+
+<div class="product-gallery__main-area">
 <div class="product-gallery__viewport">
 {% if has_discount %}<span class="product-gallery__badge product-gallery__badge--sale">SALE</span>{% elsif product.tags contains 'new' or product.tags contains 'New' or product.tags contains 'NEW' %}<span class="product-gallery__badge">NEW IN</span>{% endif %}
 <div class="product-gallery__track">
 {% for image in product.images %}
 <div class="product-gallery__slide" data-media-id="{{ image.id }}">
-<img 
+<img
 src="{{ image | image_url: width: 800 }}"
 srcset="{{ image | image_url: width: 400 }} 400w,
 {{ image | image_url: width: 600 }} 600w,
 {{ image | image_url: width: 800 }} 800w,
 {{ image | image_url: width: 1200 }} 1200w"
-sizes="(max-width: 412px) 100vw, (max-width: 768px) 100vw, 55vw"
-alt="{{ image.alt | default: product.title | escape }}" 
-width="1200" 
+sizes="(max-width: 412px) 100vw, (max-width: 768px) 100vw, 50vw"
+alt="{{ image.alt | default: product.title | escape }}"
+width="1200"
 height="{{ 1200 | divided_by: image.aspect_ratio | default: 0.75 | round }}"
 loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
 {% if forloop.first %}fetchpriority="high"{% endif %}
 decoding="async"
+data-zoom-src="{{ image | image_url: width: 2000 }}"
+data-gallery-zoom
 >
 </div>
 {% else %}
@@ -77,6 +90,7 @@ decoding="async"
 {% endfor %}
 </div>
 {% endif %}
+</div><!-- /.product-gallery__main-area -->
 </div>
 
 <!-- === PRODUCT INFO === -->
@@ -139,11 +153,14 @@ decoding="async"
     {% assign savings_cents = savings | times: 100 %}
     {% assign savings_fmt = savings_cents | money_without_currency | remove: '.00' | strip %}
     <div class="product-info__price-row">
-      <span class="product-info__compare-price"><s>₹{{ mrp_fmt }}</s></span>
       <span class="product-info__price product-info__price--on-sale">₹{{ price_fmt }}</span>
-      <span class="product-info__save-badge">{{ pct_off }}% OFF</span>
+      <span class="product-info__compare-price" aria-label="Original price"><s>₹{{ mrp_fmt }}</s></span>
+      <span class="product-info__save-badge" aria-label="{{ pct_off }} percent off">{{ pct_off }}% OFF</span>
     </div>
-    <p class="product-info__savings">You save ₹{{ savings_fmt }} on this product</p>
+    <p class="product-info__savings">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+      You saved <strong>₹{{ savings_fmt }}</strong> on this purchase
+    </p>
     {% else %}
     {% assign price_fmt = product.price | money_without_currency | remove: '.00' | strip %}
     <span class="product-info__price">₹{{ price_fmt }}</span>
@@ -152,6 +169,15 @@ decoding="async"
     <span class="product-info__tax-note">{{ settings.product_tax_note }}</span>
     {% endif %}
   </div>
+
+  {% comment %} Social proof nudge — seeded from product ID {% endcomment %}
+  {% assign vcount = product.id | modulo: 27 | plus: 8 %}
+  <div class="pdp-social-proof">
+    <span class="pdp-social-proof__dot"></span>
+    <span><strong>{{ vcount }}</strong> people are viewing this right now</span>
+  </div>
+
+  {% render 'available-offers', variant: 'pdp' %}
 
   <!-- Highlights pills (from tags) -->
   {% assign has_highlights = false %}
@@ -201,35 +227,96 @@ decoding="async"
   {% unless product.has_only_default_variant %}
   <script type="application/json" data-product-variants>{{ product.variants | json }}</script>
 
-  {% comment %} Kiwi Size Chart App – container + trigger above size options {% endcomment %}
+  {% comment %} Kiwi Size Chart App – container + trigger above size options (matches dhirai-build branch) {% endcomment %}
   <div class="kiwi-sizing-chart" data-product-id="{{ product.id }}" data-product-handle="{{ product.handle }}" data-product-title="{{ product.title | escape }}" data-product-url="{{ product.url }}"></div>
 
   <div class="product-info__options">
     {% for option in product.options_with_values %}
     {% assign option_name_down = option.name | downcase %}
     {% assign is_size = false %}
-    {% if option_name_down == 'size' or option_name_down == 'sizes' %}{% assign is_size = true %}{% endif %}
+    {% assign is_color = false %}
+    {% if option_name_down contains 'size' %}{% assign is_size = true %}{% endif %}
+    {% if option_name_down == 'color' or option_name_down == 'colour' or option_name_down contains 'color' or option_name_down contains 'colour' %}{% assign is_color = true %}{% endif %}
     <div class="product-option" data-option-index="{{ forloop.index0 }}" data-option-name="{{ option.name | escape }}">
       <label class="product-option__label">
-        {{ option.name }}
-        {% if is_size %}
-        <a href="#" class="kiwi-sizing-chart-trigger size-chart-trigger" data-kiwisizing data-product-handle="{{ product.handle }}" aria-label="View size chart" onclick="return false;">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7h18"/><path d="M7 3v4"/><path d="M17 3v4"/><path d="M7 21v-4"/><path d="M17 21v-4"/><rect x="3" y="7" width="18" height="10" rx="2"/></svg>
-          Size Chart
-        </a>
+        <span class="product-option__label-name">{{ option.name }}</span>
+        {% if is_color %}
+        <span class="product-option__selected-val"></span>
         {% endif %}
+        {% comment %} Size chart trigger removed — Kiwi app block renders its own button {% endcomment %}
       </label>
       <div class="product-option__values">
         {% for value in option.values %}
-        <span class="product-option__value {% unless is_size %}{% if option.selected_value == value %}selected{% endif %}{% endunless %}" data-option-index="{{ forloop.index0 }}" data-value="{{ value }}" role="button" tabindex="0" aria-pressed="{% unless is_size %}{% if option.selected_value == value %}true{% else %}false{% endif %}{% else %}false{% endunless %}">
+        {% if is_color %}
+          {% assign cv = value | downcase | strip %}
+          {% assign swatch_bg = cv %}
+          {% case cv %}
+          {% when 'white' %}{% assign swatch_bg = '#f5f5f0' %}
+          {% when 'off white' or 'cream' or 'ivory' %}{% assign swatch_bg = '#fffff0' %}
+          {% when 'black' %}{% assign swatch_bg = '#111111' %}
+          {% when 'red' %}{% assign swatch_bg = '#e53e3e' %}
+          {% when 'blue' %}{% assign swatch_bg = '#3182ce' %}
+          {% when 'navy' or 'navy blue' %}{% assign swatch_bg = '#1a365d' %}
+          {% when 'green' %}{% assign swatch_bg = '#38a169' %}
+          {% when 'yellow' %}{% assign swatch_bg = '#ecc94b' %}
+          {% when 'pink' or 'light pink' %}{% assign swatch_bg = '#f687b3' %}
+          {% when 'orange' %}{% assign swatch_bg = '#ed8936' %}
+          {% when 'purple' or 'violet' %}{% assign swatch_bg = '#805ad5' %}
+          {% when 'grey' or 'gray' or 'light grey' or 'light gray' %}{% assign swatch_bg = '#a0aec0' %}
+          {% when 'brown' %}{% assign swatch_bg = '#744210' %}
+          {% when 'maroon' %}{% assign swatch_bg = '#800000' %}
+          {% when 'wine' %}{% assign swatch_bg = '#722F37' %}
+          {% when 'mustard' or 'mustard yellow' %}{% assign swatch_bg = '#E1AD01' %}
+          {% when 'teal' or 'teal blue' %}{% assign swatch_bg = '#008080' %}
+          {% when 'dusty rose' or 'dusty pink' %}{% assign swatch_bg = '#DCAE96' %}
+          {% when 'peach' %}{% assign swatch_bg = '#FFCBA4' %}
+          {% when 'coral' %}{% assign swatch_bg = '#FF7F50' %}
+          {% when 'rust' %}{% assign swatch_bg = '#B7410E' %}
+          {% when 'mauve' %}{% assign swatch_bg = '#E0B0FF' %}
+          {% when 'sage' or 'sage green' %}{% assign swatch_bg = '#9DC183' %}
+          {% when 'olive' or 'olive green' %}{% assign swatch_bg = '#6B8E23' %}
+          {% when 'lavender' %}{% assign swatch_bg = '#B57EDC' %}
+          {% when 'beige' %}{% assign swatch_bg = '#F5F5DC' %}
+          {% when 'charcoal' %}{% assign swatch_bg = '#36454F' %}
+          {% when 'magenta' %}{% assign swatch_bg = '#FF00FF' %}
+          {% when 'turquoise' %}{% assign swatch_bg = '#40E0D0' %}
+          {% when 'burgundy' %}{% assign swatch_bg = '#800020' %}
+          {% when 'sky blue' %}{% assign swatch_bg = '#87CEEB' %}
+          {% when 'bottle green' %}{% assign swatch_bg = '#006A4E' %}
+          {% when 'rani pink' %}{% assign swatch_bg = '#E91E76' %}
+          {% when 'royal blue' %}{% assign swatch_bg = '#4169E1' %}
+          {% when 'mint' or 'mint green' %}{% assign swatch_bg = '#98FF98' %}
+          {% endcase %}
+          <span class="product-option__value product-option__value--color-swatch"
+            data-option-index="{{ forloop.index0 }}"
+            data-value="{{ value }}"
+            style="--swatch-bg:{{ swatch_bg }};"
+            title="{{ value | escape }}"
+            aria-label="Color: {{ value | escape }}"
+            role="button"
+            tabindex="0"
+            aria-pressed="false">
+          </span>
+        {% else %}
+        <span class="product-option__value {% unless is_size or is_color %}{% if option.selected_value == value %}selected{% endif %}{% endunless %}" data-option-index="{{ forloop.index0 }}" data-value="{{ value }}" role="button" tabindex="0" aria-pressed="{% unless is_size or is_color %}{% if option.selected_value == value %}true{% else %}false{% endif %}{% else %}false{% endunless %}">
           {{ value }}
         </span>
+        {% endif %}
         {% endfor %}
       </div>
     </div>
     {% endfor %}
   </div>
   {% endunless %}
+
+  {% comment %} Stock urgency indicator {% endcomment %}
+  {% assign curr_var = product.selected_or_first_available_variant %}
+  {% if curr_var.inventory_management == 'shopify' and curr_var.inventory_quantity > 0 and curr_var.inventory_quantity <= 10 %}
+  <div class="pdp-urgency">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+    Only <strong>{{ curr_var.inventory_quantity }}</strong> left in stock — Order soon!
+  </div>
+  {% endif %}
 
   {% comment %} Per-product promo via metafields, fallback to global settings {% endcomment %}
   {% assign promo_text = product.metafields.custom.promo_text | default: nil %}
@@ -266,12 +353,20 @@ decoding="async"
     </div>
   </div>
 
+  {% comment %} Free gift note — controlled from section settings {% endcomment %}
+  {% if section.settings.show_free_gift_note and section.settings.free_gift_note != blank %}
+  <div class="pdp-gift-note">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 010-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 000-5C13 2 12 7 12 7z"/></svg>
+    <span>{{ section.settings.free_gift_note }}</span>
+  </div>
+  {% endif %}
+
   <!-- Desktop CTA (inline) -->
   <div class="product-info__cta-desktop">
     <button type="submit" class="btn btn--primary btn--full btn--large" {% unless product.available %}disabled{% endunless %}>
       {% if product.available %}
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
-      Add to Cart
+      ADD TO BAG
       {% else %}
       Sold Out
       {% endif %}
@@ -281,109 +376,185 @@ decoding="async"
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
       Buy Now
     </button>
+    {% render 'gokwik-buy-now' %}
     {% endif %}
+    <button type="button" class="pdp-cta-wish"
+      data-wishlist-toggle
+      data-product-handle="{{ product.handle }}"
+      data-product-title="{{ product.title | escape }}"
+      data-product-url="{{ product.url }}"
+      data-product-price="{{ product.price | money }}"
+      data-product-image="{{ product.featured_image | image_url: width: 400 }}"
+      aria-label="Add to wishlist">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+    </button>
   </div>
 
-  <!-- Mobile fixed CTA bar -->
+  <!-- Mobile fixed CTA bar — ADD TO BAG + BUY NOW -->
   <div class="product-info__cta-group">
-    <div class="product-info__add-to-cart">
-      <button type="submit" class="btn btn--primary btn--full btn--large" {% unless product.available %}disabled{% endunless %}>
-        {% if product.available %}Add to Cart{% else %}Sold Out{% endif %}
-      </button>
-    </div>
+    <button type="submit" class="btn btn--atb" {% unless product.available %}disabled{% endunless %}>
+      {% if product.available %}
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+      ADD TO BAG
+      {% else %}Sold Out{% endif %}
+    </button>
     {% if product.available %}
-    <button type="button" class="btn btn--buy-now btn--full btn--large" data-buy-now data-inline-buy-now="true" onclick="pdpBuyNow(event)">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-      Buy Now
+    <button type="button" class="btn btn--buy-now-mobile" data-buy-now data-inline-buy-now="true" onclick="pdpBuyNow(event)">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+      BUY NOW
     </button>
     {% endif %}
   </div>
   {% endform %}
 
-  <!-- Delivery estimate -->
-  {% assign delivery_min_sec = settings.product_delivery_min_days | default: 5 | times: 86400 %}
-  {% assign delivery_max_sec = settings.product_delivery_max_days | default: 7 | times: 86400 %}
-  <div class="product-delivery">
-    <div class="product-delivery__icon">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+  {% unless product.available %}
+  <!-- Back-in-stock notify form (shows only when product is unavailable) -->
+  <div class="pdp-notify" data-pdp-notify>
+    <div class="pdp-notify__head">
+      <span class="pdp-notify__icon" aria-hidden="true">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      </span>
+      <div class="pdp-notify__copy">
+        <strong class="pdp-notify__title">Notify me when back in stock</strong>
+        <span class="pdp-notify__sub">We'll email you the moment this is available again.</span>
+      </div>
     </div>
-    <div class="product-delivery__text">
-      <strong>Estimated Delivery</strong>
-      <span>{{ 'now' | date: '%s' | plus: delivery_min_sec | date: '%b %d' }} — {{ 'now' | date: '%s' | plus: delivery_max_sec | date: '%b %d, %Y' }}</span>
-    </div>
+    {% form 'contact', class: 'pdp-notify__form', data-pdp-notify-form: true %}
+      {% if form.posted_successfully? %}
+      <input type="hidden" name="_posted" value="true" data-pdp-notify-posted>
+      {% endif %}
+      <input type="hidden" name="contact[subject]" value="Back in stock request: {{ product.title | escape }}">
+      <input type="hidden" name="contact[body]" value="Please notify me when '{{ product.title | escape }}' (handle: {{ product.handle }}) is back in stock.">
+      <input type="hidden" name="contact[Product Title]" value="{{ product.title | escape }}">
+      <input type="hidden" name="contact[Product URL]" value="{{ shop.url }}{{ product.url }}">
+      <label class="visually-hidden" for="pdp-notify-email">Email</label>
+      <div class="pdp-notify__input-row">
+        <input
+          type="email"
+          name="contact[email]"
+          id="pdp-notify-email"
+          class="pdp-notify__input"
+          placeholder="you@example.com"
+          required
+          autocomplete="email"
+        >
+        <button type="submit" class="pdp-notify__submit">
+          <span class="pdp-notify__submit-text">Notify Me</span>
+          <svg class="pdp-notify__submit-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+      <div class="pdp-notify__feedback" data-pdp-notify-feedback role="status" aria-live="polite">
+        {% if form.errors %}
+        <span class="pdp-notify__error">{{ form.errors | default_errors }}</span>
+        {% endif %}
+        {% if form.posted_successfully? %}
+        <span class="pdp-notify__success">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          You're on the list! We'll let you know.
+        </span>
+        {% endif %}
+      </div>
+    {% endform %}
   </div>
+  {% endunless %}
 
-  <!-- Trust badges -->
-  {% if settings.product_trust_1 != blank or settings.product_trust_2 != blank or settings.product_trust_3 != blank or settings.product_trust_4 != blank %}
-  <div class="product-trust">
-    {% if settings.product_trust_1 != blank %}
-    <div class="product-trust__item">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
-      <span>{{ settings.product_trust_1 }}</span>
+  <!-- ===== USP STRIP — 4 purchase benefits ===== -->
+  <div class="pdp-usp-row" aria-label="Purchase benefits">
+    <div class="pdp-usp-row__item">
+      <span class="pdp-usp-row__icon" aria-hidden="true">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13" rx="1"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+      </span>
+      <span class="pdp-usp-row__text">
+        <strong>{{ settings.product_trust_1 | default: 'Free Shipping' }}</strong>
+        <span>{{ settings.product_trust_1_sub | default: 'On orders ₹999+' }}</span>
+      </span>
     </div>
-    {% endif %}
-    {% if settings.product_trust_2 != blank %}
-    <div class="product-trust__item">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
-      <span>{{ settings.product_trust_2 }}</span>
+    <div class="pdp-usp-row__item">
+      <span class="pdp-usp-row__icon" aria-hidden="true">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+      </span>
+      <span class="pdp-usp-row__text">
+        <strong>{{ settings.product_trust_2 | default: '10-Day Returns' }}</strong>
+        <span>{{ settings.product_trust_2_sub | default: 'Hassle-free policy' }}</span>
+      </span>
     </div>
-    {% endif %}
-    {% if settings.product_trust_3 != blank %}
-    <div class="product-trust__item">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-      <span>{{ settings.product_trust_3 }}</span>
+    <div class="pdp-usp-row__item">
+      <span class="pdp-usp-row__icon" aria-hidden="true">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      </span>
+      <span class="pdp-usp-row__text">
+        <strong>{{ settings.product_trust_3 | default: 'Secure Checkout' }}</strong>
+        <span>{{ settings.product_trust_3_sub | default: '100% safe & encrypted' }}</span>
+      </span>
     </div>
-    {% endif %}
-    {% if settings.product_trust_4 != blank %}
-    <div class="product-trust__item">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-      <span>{{ settings.product_trust_4 }}</span>
+    <div class="pdp-usp-row__item">
+      <span class="pdp-usp-row__icon" aria-hidden="true">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/><line x1="6" y1="15" x2="8" y2="15"/></svg>
+      </span>
+      <span class="pdp-usp-row__text">
+        <strong>{{ settings.product_trust_4 | default: 'COD Available' }}</strong>
+        <span>{{ settings.product_trust_4_sub | default: 'Pay at your door' }}</span>
+      </span>
     </div>
-    {% endif %}
   </div>
-  {% endif %}
 
   {% comment %} Share {% endcomment %}
   {% if settings.product_show_share %}
   {% assign share_url = shop.url | append: product.url %}
-  <div class="product-share">
-    <span class="product-share__label">Share</span>
-    <div class="product-share__buttons">
-      <a class="product-share__btn product-share__btn--whatsapp"
+  <div class="pdp-share">
+    <span class="pdp-share__label">Share</span>
+    <div class="pdp-share__btns">
+      <a class="pdp-share__btn pdp-share__btn--wa"
          href="https://wa.me/?text={{ product.title | url_encode }}%20{{ share_url | url_encode }}"
          target="_blank" rel="noopener noreferrer" aria-label="Share on WhatsApp">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
       </a>
-      <a class="product-share__btn product-share__btn--facebook"
+      <a class="pdp-share__btn pdp-share__btn--fb"
          href="https://www.facebook.com/sharer/sharer.php?u={{ share_url | url_encode }}"
          target="_blank" rel="noopener noreferrer" aria-label="Share on Facebook">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
       </a>
-      <a class="product-share__btn product-share__btn--twitter"
+      <a class="pdp-share__btn pdp-share__btn--tw"
          href="https://twitter.com/intent/tweet?text={{ product.title | url_encode }}&url={{ share_url | url_encode }}"
-         target="_blank" rel="noopener noreferrer" aria-label="Share on X (Twitter)">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.747l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+         target="_blank" rel="noopener noreferrer" aria-label="Share on X">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.747l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
       </a>
-      <a class="product-share__btn product-share__btn--pinterest"
-         href="https://pinterest.com/pin/create/button/?url={{ share_url | url_encode }}&media={{ product.featured_image | image_url: width: 1200 | url_encode }}&description={{ product.title | url_encode }}"
-         target="_blank" rel="noopener noreferrer" aria-label="Share on Pinterest">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12c0 5.084 3.163 9.426 7.627 11.174-.105-.949-.2-2.405.042-3.441.218-.937 1.407-5.965 1.407-5.965s-.359-.719-.359-1.782c0-1.668.967-2.914 2.171-2.914 1.023 0 1.518.769 1.518 1.69 0 1.029-.655 2.568-.994 3.995-.283 1.194.599 2.169 1.777 2.169 2.133 0 3.772-2.249 3.772-5.495 0-2.873-2.064-4.882-5.012-4.882-3.414 0-5.418 2.561-5.418 5.207 0 1.031.397 2.138.893 2.738a.36.36 0 01.083.345l-.333 1.36c-.053.22-.174.267-.402.161-1.499-.698-2.436-2.889-2.436-4.649 0-3.785 2.75-7.262 7.929-7.262 4.163 0 7.398 2.967 7.398 6.931 0 4.136-2.607 7.464-6.227 7.464-1.216 0-2.359-.632-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0z"/></svg>
-      </a>
-      <button class="product-share__btn product-share__btn--copy" type="button" data-share-copy aria-label="Copy product link">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
-        <span class="product-share__copy-tip">Copied!</span>
+      <button class="pdp-share__btn pdp-share__btn--copy" type="button" data-share-copy aria-label="Copy link">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+        <span class="pdp-share__tip" aria-live="polite">Copied!</span>
       </button>
     </div>
   </div>
   {% endif %}
+
+  <!-- Trust trio strip -->
+  <div class="pdp-trust-trio" aria-label="Trust assurances">
+    <div class="pdp-trust-trio__item">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+      <span>100% Genuine</span>
+    </div>
+    <div class="pdp-trust-trio__item">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/><line x1="6" y1="15" x2="8" y2="15"/></svg>
+      <span>Secure Payment</span>
+    </div>
+    <div class="pdp-trust-trio__item">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+      <span>Easy Returns</span>
+    </div>
+  </div>
 
   <!-- Accordion -->
   <div class="product-accordion">
     {% if product.description != blank %}
     <div class="accordion-item open">
       <button class="accordion-trigger" type="button" aria-expanded="true">
-        Description
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        <span class="accordion-trigger__lead">
+          <span class="accordion-trigger__icon" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+          </span>
+          <span>Product Details</span>
+        </span>
+        <svg class="accordion-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
       </button>
       <div class="accordion-content">
         <div class="accordion-content__inner">
@@ -396,8 +567,13 @@ decoding="async"
     {% if settings.product_shipping_text != blank %}
     <div class="accordion-item">
       <button class="accordion-trigger" type="button" aria-expanded="false">
-        Shipping & Returns
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        <span class="accordion-trigger__lead">
+          <span class="accordion-trigger__icon" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13" rx="1"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+          </span>
+          <span>Shipping &amp; Returns</span>
+        </span>
+        <svg class="accordion-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
       </button>
       <div class="accordion-content">
         <div class="accordion-content__inner">
@@ -410,8 +586,13 @@ decoding="async"
     {% if settings.product_care_text != blank %}
     <div class="accordion-item">
       <button class="accordion-trigger" type="button" aria-expanded="false">
-        Care Instructions
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        <span class="accordion-trigger__lead">
+          <span class="accordion-trigger__icon" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+          </span>
+          <span>Care Instructions</span>
+        </span>
+        <svg class="accordion-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
       </button>
       <div class="accordion-content">
         <div class="accordion-content__inner">
@@ -422,52 +603,69 @@ decoding="async"
     {% endif %}
   </div>
 
-  <!-- Product meta -->
+  <!-- Key Highlights (from product tags) -->
   <div class="product-info__meta">
+    <h3 class="product-info__meta-title">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      Product Specifications
+    </h3>
+    <table class="product-info__meta-table">
+      <tbody>
     {% for tag in product.tags %}
       {% assign tag_lower = tag | downcase %}
       {% if tag_lower contains 'fabric:' or tag_lower contains 'fabric-' %}
-      <div class="product-info__meta-item">
-        <strong>Fabric:</strong> {{ tag | remove: 'fabric:' | remove: 'Fabric:' | remove: 'fabric-' | remove: 'Fabric-' | strip }}
-      </div>
+      <tr class="product-info__meta-row">
+        <td class="product-info__meta-key">Fabric</td>
+        <td class="product-info__meta-val">{{ tag | remove: 'fabric:' | remove: 'Fabric:' | remove: 'fabric-' | remove: 'Fabric-' | strip }}</td>
+      </tr>
       {% endif %}
       {% if tag_lower contains 'fit:' or tag_lower contains 'fit-' %}
-      <div class="product-info__meta-item">
-        <strong>Fit:</strong> {{ tag | remove: 'fit:' | remove: 'Fit:' | remove: 'fit-' | remove: 'Fit-' | strip }}
-      </div>
+      <tr class="product-info__meta-row">
+        <td class="product-info__meta-key">Fit</td>
+        <td class="product-info__meta-val">{{ tag | remove: 'fit:' | remove: 'Fit:' | remove: 'fit-' | remove: 'Fit-' | strip }}</td>
+      </tr>
       {% endif %}
       {% if tag_lower contains 'length:' or tag_lower contains 'length-' %}
-      <div class="product-info__meta-item">
-        <strong>Length:</strong> {{ tag | remove: 'length:' | remove: 'Length:' | remove: 'length-' | remove: 'Length-' | strip }}
-      </div>
+      <tr class="product-info__meta-row">
+        <td class="product-info__meta-key">Length</td>
+        <td class="product-info__meta-val">{{ tag | remove: 'length:' | remove: 'Length:' | remove: 'length-' | remove: 'Length-' | strip }}</td>
+      </tr>
       {% endif %}
       {% if tag_lower contains 'sleeve:' or tag_lower contains 'sleeve-' %}
-      <div class="product-info__meta-item">
-        <strong>Sleeve:</strong> {{ tag | remove: 'sleeve:' | remove: 'Sleeve:' | remove: 'sleeve-' | remove: 'Sleeve-' | strip }}
-      </div>
+      <tr class="product-info__meta-row">
+        <td class="product-info__meta-key">Sleeve</td>
+        <td class="product-info__meta-val">{{ tag | remove: 'sleeve:' | remove: 'Sleeve:' | remove: 'sleeve-' | remove: 'Sleeve-' | strip }}</td>
+      </tr>
       {% endif %}
       {% if tag_lower contains 'occasion:' or tag_lower contains 'occasion-' %}
-      <div class="product-info__meta-item">
-        <strong>Occasion:</strong> {{ tag | remove: 'occasion:' | remove: 'Occasion:' | remove: 'occasion-' | remove: 'Occasion-' | strip }}
-      </div>
+      <tr class="product-info__meta-row">
+        <td class="product-info__meta-key">Occasion</td>
+        <td class="product-info__meta-val">{{ tag | remove: 'occasion:' | remove: 'Occasion:' | remove: 'occasion-' | remove: 'Occasion-' | strip }}</td>
+      </tr>
       {% endif %}
       {% if tag_lower contains 'set:' or tag_lower contains 'set-' %}
-      <div class="product-info__meta-item">
-        <strong>Set Contents:</strong> {{ tag | remove: 'set:' | remove: 'Set:' | remove: 'set-' | remove: 'Set-' | strip }}
-      </div>
+      <tr class="product-info__meta-row">
+        <td class="product-info__meta-key">Set Contents</td>
+        <td class="product-info__meta-val">{{ tag | remove: 'set:' | remove: 'Set:' | remove: 'set-' | remove: 'Set-' | strip }}</td>
+      </tr>
       {% endif %}
     {% endfor %}
     {% if product.vendor != blank %}
-    <div class="product-info__meta-item">
-      <strong>Brand:</strong> {{ product.vendor }}
-    </div>
+      <tr class="product-info__meta-row">
+        <td class="product-info__meta-key">Brand</td>
+        <td class="product-info__meta-val">{{ product.vendor }}</td>
+      </tr>
     {% endif %}
-    <div class="product-info__meta-item">
-      <strong>SKU:</strong> {{ product.selected_or_first_available_variant.sku | default: 'N/A' }}
-    </div>
-    <div class="product-info__meta-item">
-      <strong>Type:</strong> {{ product.type | default: 'N/A' }}
-    </div>
+      <tr class="product-info__meta-row">
+        <td class="product-info__meta-key">SKU</td>
+        <td class="product-info__meta-val">{{ product.selected_or_first_available_variant.sku | default: 'N/A' }}</td>
+      </tr>
+      <tr class="product-info__meta-row">
+        <td class="product-info__meta-key">Type</td>
+        <td class="product-info__meta-val">{{ product.type | default: 'N/A' }}</td>
+      </tr>
+      </tbody>
+    </table>
   </div>
 
 </div>
@@ -486,7 +684,18 @@ decoding="async"
 {% assign review_ratings = '5,5,4,5,5,4,5' | split: ',' %}
 {% assign rev_imgs = '0,1,0,1,0,0,1' | split: ',' %}
 
-<div class="pdp-reviews" id="pdp-reviews">
+<!-- Recently Viewed — populated from localStorage by JS -->
+<section class="pdp-recent" data-pdp-recent data-current-handle="{{ product.handle }}" hidden>
+  <div class="container">
+    <div class="pdp-recent__header">
+      <h2 class="pdp-recent__title">Recently Viewed</h2>
+      <button type="button" class="pdp-recent__clear" data-recent-clear aria-label="Clear recently viewed">Clear</button>
+    </div>
+    <div class="pdp-recent__scroll" data-recent-scroll role="list"></div>
+  </div>
+</section>
+
+<div class="" id="pdp-reviews">
 <div class="container">
   <div class="pdp-reviews__header">
     <div class="pdp-reviews__header-left">
@@ -574,27 +783,27 @@ decoding="async"
 {% assign rec_count = 0 %}
 {% for p in rec_collection.products limit: 9 %}{% if p.id != product.id %}{% assign rec_count = rec_count | plus: 1 %}{% endif %}{% endfor %}
 {% if rec_count > 0 %}
+<style>
+.pdp-reco-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.pdp-reco-grid__item{min-width:0;width:100%;box-sizing:border-box}
+.pdp-reco-grid__item .product-card{height:100%}
+@media(max-width:1024px){.pdp-reco-grid{grid-template-columns:repeat(3,1fr);gap:14px}}
+@media(max-width:768px){.pdp-reco-grid{grid-template-columns:repeat(2,1fr);gap:12px}}
+@media(max-width:480px){.pdp-reco-grid{grid-template-columns:repeat(2,1fr);gap:10px}}
+</style>
 <div class="pdp-recommendations">
 <div class="container">
-  <div class="section-header--with-nav">
-    <div>
-      <div class="section-header__subtitle">Curated for you</div>
-      <h2 class="section-header__title">You Might Also Like</h2>
-    </div>
+  <div class="bwk-section__head">
+    <h2 class="bwk-section__title">You May Also Like</h2>
   </div>
-  <div class="carousel pdp-reco-carousel" data-carousel data-carousel-per-view="4" data-carousel-gap="24" data-carousel-loop="true">
-    <div class="carousel__viewport">
-      <div class="carousel__track" data-carousel-track>
-        {% for p in rec_collection.products limit: 9 %}
-        {% if p.id != product.id %}
-        <div class="carousel__slide" data-carousel-slide>
-          {% render 'product-card', product: p %}
-        </div>
-        {% endif %}
-        {% endfor %}
-      </div>
+  <div class="pdp-reco-grid">
+    {% for p in rec_collection.products limit: 9 %}
+    {% if p.id != product.id %}
+    <div class="pdp-reco-grid__item">
+      {% render 'product-card', product: p %}
     </div>
-    <div class="carousel__dots" data-carousel-dots></div>
+    {% endif %}
+    {% endfor %}
   </div>
 </div>
 </div>
@@ -605,8 +814,9 @@ decoding="async"
 {% unless product.has_only_default_variant %}
 <div class="size-sheet-overlay" id="size-sheet-overlay"></div>
 <div class="size-sheet" id="size-sheet" aria-hidden="true">
+<div class="size-sheet__drag-handle"></div>
 <div class="size-sheet__header">
-<span class="size-sheet__title">Select Size</span>
+<span class="size-sheet__title" id="size-sheet-title">Select Size</span>
 <button class="size-sheet__close" aria-label="Close" type="button">
 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
 </button>
@@ -614,10 +824,27 @@ decoding="async"
 <div class="size-sheet__sizes" id="size-sheet-sizes"></div>
 <button class="btn btn--primary btn--full size-sheet__add" id="size-sheet-add" type="button" disabled>Select a size</button>
 </div>
+
+{% comment %} Color Picker Bottom Sheet {% endcomment %}
+<div class="color-sheet-overlay" id="color-sheet-overlay"></div>
+<div class="color-sheet" id="color-sheet" aria-hidden="true">
+<div class="color-sheet__header">
+<span class="color-sheet__title">Select Colour</span>
+<button class="color-sheet__close" aria-label="Close" type="button">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+</button>
+</div>
+<div class="color-sheet__colors" id="color-sheet-colors"></div>
+<button class="btn btn--primary btn--full color-sheet__add" id="color-sheet-add" type="button" disabled>Select a colour</button>
+</div>
 {% endunless %}
 
-{% comment %} Size Chart Modal — Tabbed {% endcomment %}
-{% assign sc = product.metafields.custom.size_chart.value %}
+{% comment %} Size Chart Modal — Tabbed (Kiwi Size Chart app integration) {% endcomment %}
+{% comment %} Check Kiwi metafield first, fallback to custom.size_chart {% endcomment %}
+{% assign sc = product.metafields.kiwisizing.chart.value | default: nil %}
+{% unless sc %}{% assign sc = product.metafields.kiwisizing.size_chart.value | default: nil %}{% endunless %}
+{% unless sc %}{% assign sc = product.metafields.kiwi_sizing.chart.value | default: nil %}{% endunless %}
+{% unless sc %}{% assign sc = product.metafields.custom.size_chart.value | default: nil %}{% endunless %}
 {% if sc != blank %}
 <div class="size-chart-overlay" id="size-chart-modal" aria-hidden="true">
 <div class="size-chart-modal">
@@ -718,6 +945,8 @@ decoding="async"
 </div>
 </div>
 {% endif %}
+
+{% comment %} Size Guide handled by Kiwi Size Chart app — no custom handler needed {% endcomment %}
 
 <script type="application/ld+json">
 {

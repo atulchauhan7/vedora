@@ -1,15 +1,14 @@
+{% assign collection = collections[section.settings.collection] %}
 <section class="section" data-section-id="{{ section.id }}">
 <div class="container">
-<div class="section-header--with-nav" data-animate="fade-up">
-<div>
-{% if section.settings.subtitle != blank %}
-<div class="section-header__subtitle">{{ section.settings.subtitle }}</div>
+<div class="bwk-section__head" data-animate="fade-up">
+<h2 class="bwk-section__title split-words">{{ section.settings.title }}{% if section.settings.title_suffix != blank %} <span class="bwk-section__title-suffix">{{ section.settings.title_suffix }}</span>{% endif %}</h2>
+{% if section.settings.show_view_all %}
+<a href="{{ collection.url | default: routes.all_products_collection_url }}" class="bwk-section__link">
+View All
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+</a>
 {% endif %}
-<h2 class="section-header__title split-words">{{ section.settings.title }}</h2>
-{% if section.settings.description != blank %}
-<p class="section-header__description">{{ section.settings.description }}</p>
-{% endif %}
-</div>
 </div>
 
 <div class="carousel featured-carousel"
@@ -22,7 +21,6 @@ data-carousel-loop="true"
 data-animate="fade-up" data-animate-delay="200">
 <div class="carousel__viewport">
 <div class="carousel__track" data-carousel-track>
-{% assign collection = collections[section.settings.collection] %}
 {% for product in collection.products limit: section.settings.products_to_show %}
 <div class="carousel__slide" data-carousel-slide style="padding: 0 12px;">
 {% render 'product-card', product: product %}
@@ -39,17 +37,9 @@ data-animate="fade-up" data-animate-delay="200">
 <div class="carousel__dots" data-carousel-dots></div>
 </div>
 
-{% if section.settings.show_view_all %}
-<div class="text-center" style="margin-top: 1rem;" data-animate="fade-up" data-animate-delay="400">
-<a href="{{ collection.url | default: routes.all_products_collection_url }}" class="btn btn--secondary btn--view-all">
-View All Products
-<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-</a>
-</div>
-{% endif %}
 </div>
 </section>
 
 {% schema %}
-{"name":"Featured Collection","settings":[{"type":"text","id":"subtitle","label":"Subtitle","default":"Curated for you"},{"type":"text","id":"title","label":"Title","default":"Featured Products"},{"type":"textarea","id":"description","label":"Description","default":"Handpicked essentials that embody quality and timeless design"},{"type":"collection","id":"collection","label":"Collection"},{"type":"range","id":"products_to_show","label":"Products to show","min":2,"max":12,"step":1,"default":8},{"type":"select","id":"columns","label":"Products per view","options":[{"value":"2","label":"2"},{"value":"3","label":"3"},{"value":"4","label":"4"}],"default":"4"},{"type":"checkbox","id":"autoplay","label":"Auto-rotate slides","default":true},{"type":"checkbox","id":"show_view_all","label":"Show \u0027View All\u0027 button","default":true}],"presets":[{"name":"Featured Collection"}]}
+{"name":"Featured Collection","settings":[{"type":"text","id":"subtitle","label":"Subtitle","default":"Curated for you"},{"type":"text","id":"title","label":"Title","default":"Featured Products"},{"type":"text","id":"title_suffix","label":"Title suffix (lighter weight)","info":"Appended after the title in a lighter style, e.g. 'Of The Season'"},{"type":"textarea","id":"description","label":"Description","default":"Handpicked essentials that embody quality and timeless design"},{"type":"collection","id":"collection","label":"Collection"},{"type":"range","id":"products_to_show","label":"Products to show","min":2,"max":12,"step":1,"default":8},{"type":"select","id":"columns","label":"Products per view","options":[{"value":"2","label":"2"},{"value":"3","label":"3"},{"value":"4","label":"4"}],"default":"4"},{"type":"checkbox","id":"autoplay","label":"Auto-rotate slides","default":true},{"type":"checkbox","id":"show_view_all","label":"Show \u0027View All\u0027 button","default":true}],"presets":[{"name":"Featured Collection"}]}
 {% endschema %}
