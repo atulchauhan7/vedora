@@ -38,7 +38,7 @@
     "enable_animations": true,
     "enable_custom_cursor": false,
     "enable_newsletter_popup": false,
-    "whatsapp_number": "+919166881552",
+    "whatsapp_number": "",
     "product_promo_enabled": true,
     "product_promo_text": "Flat 100 Rupees Off On First order",
     "product_promo_code": "FIRST100",
@@ -67,7 +67,21 @@
         "settings": {
           "logo": "shopify://shop_images/transparent_bg.png",
           "menu": "main-menu",
-          "show_announcement": true
+          "show_announcement": true,
+          "show_engage_section": true,
+          "find_store_url": "",
+          "track_order_url": "",
+          "show_utility_bar": true,
+          "utility_link_1_label": "Offers",
+          "utility_link_1_url": "",
+          "utility_link_2_label": "New Arrivals",
+          "utility_link_2_url": "",
+          "utility_link_3_label": "Best Sellers",
+          "utility_link_3_url": "",
+          "utility_link_4_label": "Track Order",
+          "utility_link_4_url": "",
+          "utility_link_5_label": "Contact Us",
+          "utility_link_5_url": ""
         }
       },
       "cart-drawer": {
@@ -189,6 +203,14 @@
         ],
         "settings": {
           "show_section": true
+        }
+      },
+      "usp-strip": {
+        "type": "usp-strip",
+        "settings": {
+          "show_section": true,
+          "background": "light",
+          "speed": 40
         }
       }
     },
