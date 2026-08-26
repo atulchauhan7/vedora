@@ -141,20 +141,31 @@
         "blocks": {
           "category_xKCAMw": {
             "type": "category",
+            "disabled": true,
             "settings": {
-              "label": "Best sellers",
-              "link": "shopify://collections/sabki-pasand"
+              "label": "Farsi Sets",
+              "link": "shopify://collections/farsi-set"
+            }
+          },
+          "category_Bhhx6N": {
+            "type": "category",
+            "disabled": true,
+            "settings": {
+              "label": "Category",
+              "link": ""
             }
           },
           "category_z63TCm": {
             "type": "category",
+            "disabled": true,
             "settings": {
               "label": "The Grace",
-              "link": "shopify://collections/the-grace"
+              "link": "shopify://collections/co-ord-set"
             }
           },
           "category_NFpbcV": {
             "type": "category",
+            "disabled": true,
             "settings": {
               "label": "The Muse",
               "link": "shopify://collections/the-muse"
@@ -162,6 +173,7 @@
           },
           "category_A8zzmY": {
             "type": "category",
+            "disabled": true,
             "settings": {
               "label": "The Soul",
               "link": "shopify://products/ethic-kurti"
@@ -178,13 +190,14 @@
         },
         "block_order": [
           "category_xKCAMw",
+          "category_Bhhx6N",
           "category_z63TCm",
           "category_NFpbcV",
           "category_A8zzmY",
           "category_CNrpzp"
         ],
         "settings": {
-          "show_section": true
+          "show_section": false
         }
       }
     },
