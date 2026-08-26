@@ -141,7 +141,6 @@
         "blocks": {
           "category_xKCAMw": {
             "type": "category",
-            "disabled": true,
             "settings": {
               "label": "Best sellers",
               "link": "shopify://collections/sabki-pasand"
@@ -149,7 +148,6 @@
           },
           "category_z63TCm": {
             "type": "category",
-            "disabled": true,
             "settings": {
               "label": "The Grace",
               "link": "shopify://collections/the-grace"
@@ -157,7 +155,6 @@
           },
           "category_NFpbcV": {
             "type": "category",
-            "disabled": true,
             "settings": {
               "label": "The Muse",
               "link": "shopify://collections/the-muse"
@@ -165,7 +162,6 @@
           },
           "category_A8zzmY": {
             "type": "category",
-            "disabled": true,
             "settings": {
               "label": "The Soul",
               "link": "shopify://products/ethic-kurti"
